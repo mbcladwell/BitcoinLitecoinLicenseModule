@@ -20,7 +20,7 @@ public class UnlicensedPanel extends JFrame {
 
   private static final long serialVersionUID = 1L;
 
-    static JButton button;
+  static JButton button;
   static JLabel licenseKey;
   static JLabel picLabel;
   static JLabel label;
@@ -58,10 +58,10 @@ public class UnlicensedPanel extends JFrame {
    this.setTitle("Litecoin License Module  " + LocalDate.now() );
     this.setResizable(true);
 
-    
-    Image img =
-      new ImageIcon(DialogLicenseManager.class.getResource("../../../resources/main/ltc.png")).getImage();
-       this.setIconImage(img);
+
+    URL imageURL = llm.UnlicensedPanel.class.getResource("images/ltc.png");
+    ImageIcon imgIcon =   new ImageIcon( imageURL);
+    this.setIconImage(imgIcon.getImage());
  
 
     JPanel licenseLabelPane = new JPanel(new BorderLayout());
@@ -114,13 +114,10 @@ public class UnlicensedPanel extends JFrame {
     // clipboardButton.setMnemonic(KeyEvent.VK_Y);
     clipboardButton.setToolTipText("Copy wallet ID to clipboard");
     
-    try {
-      // JLabel ltclabel = new JLabel(new ImageIcon(getClass().getClassLoader().getResource("../../resources/main/ltc.png")));
+    try {   
   
-	Image clipImage = ImageIO.read(getClass().getClassLoader().getResource("../../resources/main/clipboard2.png"));
-   
-	ImageIcon ii = new ImageIcon(clipImage.getScaledInstance( 20, 20,  java.awt.Image.SCALE_SMOOTH ));
-	clipboardButton.setIcon(ii);
+      ImageIcon clipImgIcon =  new ImageIcon(llm.UnlicensedPanel.class.getResource("images/clipboard2.png"));
+      clipboardButton.setIcon( new ImageIcon(clipImgIcon.getImage().getScaledInstance( 20, 20,  java.awt.Image.SCALE_SMOOTH )) );
     } catch (Exception ex) {
       System.out.println(ex);
     } 
@@ -139,6 +136,31 @@ public class UnlicensedPanel extends JFrame {
 	    }
 	  }));
     pane1.add(clipboardButton, c);
+
+    JButton qrButton = new JButton();
+    // clipboardButton.setMnemonic(KeyEvent.VK_Y);
+    qrButton.setToolTipText("Generate QR code for transaction");
+    
+    try {   
+  
+      ImageIcon qrImgIcon =  new ImageIcon(llm.UnlicensedPanel.class.getResource("images/qr.png"));
+      qrButton.setIcon( new ImageIcon(qrImgIcon.getImage().getScaledInstance( 20, 20,  java.awt.Image.SCALE_SMOOTH )) );
+    } catch (Exception ex) {
+      System.out.println(ex);
+    } 
+    
+    c.gridx = 5;
+    c.gridy = 1;
+    c.gridwidth = 1;
+    c.gridheight = 1;
+    qrButton.addActionListener(
+        (new ActionListener() {
+	    public void actionPerformed(ActionEvent e) {
+	      new DialogQRCode( merchantWalletID, String.valueOf(new java.text.DecimalFormat("######.######").format(costLTC + costLTC*0.02)));	     
+	    }
+	  }));
+    pane1.add(qrButton, c);
+
     
     label = new JLabel("2.");
     c.gridx = 0;
@@ -195,9 +217,14 @@ public class UnlicensedPanel extends JFrame {
     okButton.addActionListener(
         (new ActionListener() {
           public void actionPerformed(ActionEvent e) {
-	    //https://stackoverflow.com/questions/11037622/pass-variables-to-actionlistener-in-java
-            parent.evaluateTransaction( textField.getText() );
-            //((JFrame)((JPanel)e.getSource()).getParent()).dispose();
+	    if( textField.getText() != null && !textField.getText().isEmpty()) {
+	      	    parent.evaluateTransaction( textField.getText() );
+	     }else{
+	      JOptionPane.showMessageDialog( parent,
+					     "Enter a valid transaction ID in the text box.",
+					     "Invalid transaction",
+					     JOptionPane.ERROR_MESSAGE);
+	    }
 	    dispose();
           }
         }));
@@ -218,7 +245,7 @@ public class UnlicensedPanel extends JFrame {
     //cancelButton.setHorizontalAlignment(SwingConstants.RIGHT);
     c.gridx = 4;
     c.gridy = 4;
-    c.gridwidth = 1;
+    c.gridwidth = 2;
     c.gridheight = 1;
     c.anchor = GridBagConstraints.LINE_END;
     cancelButton.addActionListener(

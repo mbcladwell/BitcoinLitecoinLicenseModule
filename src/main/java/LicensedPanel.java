@@ -103,7 +103,7 @@ public class LicensedPanel extends JFrame {
     c.anchor = GridBagConstraints.LINE_START;
     pane1.add(merchantWalletIDLabel, c);
 
-    JLabel ltclabel = new JLabel(new ImageIcon(getClass().getClassLoader().getResource("ltc2.png")));
+    JLabel ltclabel = new JLabel(new ImageIcon(getClass().getClassLoader().getResource("images/ltc2.png")));
     //ltclabel.setPreferredSize(new Dimension(180, 180));
     
     c.gridx = 3;
