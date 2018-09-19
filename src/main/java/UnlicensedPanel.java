@@ -28,7 +28,7 @@ public class UnlicensedPanel extends JFrame {
   
   static JButton okButton;
   static JButton cancelButton;
-
+  private JLabel licenseLabel;
   private JLabel  doubleSpendLabel;
   private JLabel  elapsedTimeLabel;
   public JLabel  confirmationsLabel;
@@ -39,14 +39,18 @@ public class UnlicensedPanel extends JFrame {
   private String merchantWalletID;
   private long requiredConfirmations;
   private int expiresInHours;
-  private DialogLicenseManager  parent;
+  private DialogLicenseManager parent;
+  private LicenseManager lm;
   
-  public UnlicensedPanel(DialogLicenseManager parent,
+  public UnlicensedPanel(DialogLicenseManager dlm,
+			 boolean useTrialBanner,
+			 int trialExpiresInDays,
 			 double costLTC,
-			  String merchantWalletID,
-			  String licenseID,
-			  long requiredConfirmations,
-			  int expiresInHours) {
+			 String merchantWalletID,
+			 String licenseID,
+			 long requiredConfirmations,
+			 int expiresInHours,
+			 LicenseManager lm) {
 
     this.costLTC = costLTC;
     this.merchantWalletID = merchantWalletID;
@@ -67,8 +71,14 @@ public class UnlicensedPanel extends JFrame {
     JPanel licenseLabelPane = new JPanel(new BorderLayout());
     licenseLabelPane.setBorder(BorderFactory.createTitledBorder(""));
 
-    JLabel licenseLabel = new JLabel("Unlicensed", JLabel.CENTER);
-    licenseLabel.setForeground( Color.red);
+    if(useTrialBanner){
+      String dayORdays = (trialExpiresInDays == 1)? "day":"days";
+      licenseLabel = new JLabel("Trial period expires in " + trialExpiresInDays + " " + dayORdays, JLabel.CENTER);
+    }else{
+      licenseLabel = new JLabel("Unlicensed", JLabel.CENTER);
+      licenseLabel.setForeground( Color.red);
+    }
+    
     licenseLabel.setFont(new Font("Serif", Font.BOLD, 25));
     licenseLabelPane.add(licenseLabel, BorderLayout.CENTER);
     this.add(licenseLabelPane, BorderLayout.NORTH);  
@@ -218,7 +228,7 @@ public class UnlicensedPanel extends JFrame {
         (new ActionListener() {
           public void actionPerformed(ActionEvent e) {
 	    if( textField.getText() != null && !textField.getText().isEmpty()) {
-	      	    parent.evaluateTransaction( textField.getText() );
+	      	    lm.evaluateTransaction( textField.getText() );
 	     }else{
 	      JOptionPane.showMessageDialog( parent,
 					     "Enter a valid transaction ID in the text box.",
