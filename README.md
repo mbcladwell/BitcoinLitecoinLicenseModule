@@ -1,13 +1,41 @@
 ## Litecoin License Module
 
-Noninteractive license management for Java developers
+![](extra/licensedview.png)
+
+## Introduction
+
+The Litecoin License Manager is a Java plug-in that will allow you to non-interactively collect software licensing fees from your customers using the cryptocurrency Litecoin. Why Litecoin instead of Bitcoin?
+
+* Availability: Litecoin is available on most exchanges and is readily exchanged for Dollars or Bitcoin.  Check out [Coinbase](www.coinbase.com), which also provides you with a wallet.
+
+* Wallets:  Multiple wallets are available.  My favorite is the lightweight, deterministic brain wallet [Electrum](https://electrum-ltc.org/)
+
+* Low volatility relative to [Bitcoin](https://bitinfocharts.com/comparison/price-btc-ltc-nmc.html).
+
+* Faster [transaction times](https://bitinfocharts.com/comparison/confirmationtime-btc-ltc.html#log) relative to Bitcoin.  A block ascceptance time of 2.5 minutes relative to Bitcoin's 10 minutes.
+
+* [Lower transaction fees](https://bitinfocharts.com/comparison/transactionfees-btc-ltc.html) relative to Bitcoin. A [recent](https://www.businessinsider.com/a-99-million-litecoin-trade-took-just-25-minutes-and-cost-040-2018-4) $99 million Litecoin transaction took 25 minutes and cost 40 cents in fees.
+
+* Litecoin also has an increased maximum number of coins 84,000,000 vs. Bitcoin's 21,000,000 and a different hashing algorithm - scrypt vs. SHA-256.
+
+A Litecoin License encapsuplates a variety of parameters such as license expiration date, number of transaction confimations required, transaction expiration, etc. that allow you to balance ease of Licence attainment with security.  Utilizing the Litecoin License Manager is a three step process:
 
 
-The workflow for obtaining a license looks like this:
+1.  [Set up your Litecoin Wallet](https://github.com/mbcladwell/LLMLitecoinLicenseGenerator/blob/master/extra/ltcwallet.md) and generate wallet IDs.
+
+2.  Use the Litecoin License Manager License Key Generator to [generate license keys](https://github.com/mbcladwell/LLMLitecoinLicenseGenerator) containing your parameters of interest.
+
+3.  Integrate the Litecoin License Manager with your own software.
+
+
+
+The user's (customer's) workflow for obtaining a license looks like this:
 
 ![](extra/unlicensed.png)
 ![](extra/fig1.png)
 ![](extra/licensedview.png)
+
+Instructions for you the developer:
 
 ## Download LLM from Github
 
