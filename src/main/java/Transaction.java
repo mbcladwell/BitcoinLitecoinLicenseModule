@@ -1,4 +1,4 @@
-package llm;
+package bllm;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -16,6 +16,7 @@ public class Transaction {
   private String merchantWalletID;
   private String[] addresses;
   private boolean walletIDnotFound = false;
+  private URL url;
 
   public LitecoinTransactionObject.Output[] outputs;
 
@@ -26,9 +27,17 @@ public class Transaction {
    * https://api.blockcypher.com/v1/ltc/main/txs/9e9c462b755defda988e9950b9797cecd055a017d32d9c6feff89ebdea5fe3cd
    * my wallet: LMGaFd8tmxJSDbo3GLZFJaPd1kNJ9r1v48
    */
-  public Transaction(String transactionID, String merchantWalletID) {
+  public Transaction(String transactionID, String merchantWalletID, String unitsOfCost) {
     try {
-      URL url = new URL("https://api.blockcypher.com/v1/ltc/main/txs/" + transactionID);
+      switch (unitsOfCost) {
+        case "Litecoin":
+          url = new URL("https://api.blockcypher.com/v1/ltc/main/txs/" + transactionID);
+          break;
+        case "Bitcoin":
+          url = new URL("https://api.blockcypher.com/v1/btc/main/txs/" + transactionID);
+          break;
+      }
+
       BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));
       Gson gson = new GsonBuilder().create();
       LitecoinTransactionObject lto = gson.fromJson(reader, LitecoinTransactionObject.class);

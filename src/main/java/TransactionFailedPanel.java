@@ -1,4 +1,4 @@
-package llm;
+package bllm;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -39,9 +39,9 @@ public class TransactionFailedPanel extends JFrame {
  
   
   private double dollarCost;
-  private double ltcCost;
+  private double cost;
   private double dollarSubmitted;
-  private double ltcSubmitted;
+  private double costSubmitted;
   private boolean walletIDnotFound;
   
   private String merchantWalletID;
@@ -56,7 +56,8 @@ public class TransactionFailedPanel extends JFrame {
   
   public TransactionFailedPanel(DialogLicenseManager parent,
 				double dollarCost,
-				double ltcCost,
+				double cost,
+				String unitsOfCost,
 				String merchantWalletID,
 				String licenseID,
 				String transactionID,
@@ -66,11 +67,11 @@ public class TransactionFailedPanel extends JFrame {
 				long deltaTime,
 				long actualConfirmations,
 				double dollarSubmitted,
-				double ltcSubmitted,
+				double costSubmitted,
 				boolean walletIDnotFound) {
 
     this.dollarCost = dollarCost;
-    this.ltcCost = ltcCost;
+    this.cost = cost;
     this.merchantWalletID = merchantWalletID;
     this.requiredConfirmations = requiredConfirmations;
     this.expiresInHours = expiresInHours;
@@ -81,7 +82,7 @@ public class TransactionFailedPanel extends JFrame {
     this.deltaTime = deltaTime;
     this.actualConfirmations = actualConfirmations;
     this.dollarSubmitted = dollarSubmitted;
-    this.ltcSubmitted = ltcSubmitted;
+    this.costSubmitted = costSubmitted;
     this.walletIDnotFound = walletIDnotFound;
     this.transactionID = transactionID;
     
@@ -107,7 +108,7 @@ public class TransactionFailedPanel extends JFrame {
         c.insets = new Insets(5,5,5,5);  
 
     pane1.setBorder(BorderFactory.createRaisedBevelBorder());
-    System.out.println("begin failed panel: " + this.ltcSubmitted);
+    System.out.println("begin failed panel: " + this.costSubmitted);
  
     label = new JLabel("Merchant wallet ID:");    
     c.gridx = 0;
@@ -254,24 +255,24 @@ public class TransactionFailedPanel extends JFrame {
     pane1.add(dollarCostLabel, c);
 
 
-    label = new JLabel("Litecoin submitted:");
+    label = new JLabel(unitsOfCost + " submitted:");
     // c.fill = GridBagConstraints.HORIZONTAL;
      c.anchor = GridBagConstraints.LINE_END;
     c.gridx = 0;
     c.gridy = 8;
     pane1.add(label, c);
 
-    ltcSubmittedLabel =new JLabel (String.valueOf(this.ltcSubmitted));
+    ltcSubmittedLabel =new JLabel (String.valueOf(this.costSubmitted));
     c.gridx = 1;
     c.gridy = 8;
     c.anchor = GridBagConstraints.LINE_START;
-    if(this.ltcSubmitted < this.ltcCost){
+    if(this.costSubmitted < this.cost){
     ltcSubmittedLabel.setForeground( Color.red);
     dollarSubmittedLabel.setForeground( Color.red);
     }
     pane1.add(ltcSubmittedLabel, c);
 
-    label = new JLabel("Litecoin cost:");
+    label = new JLabel(unitsOfCost + " cost:");
     // c.fill = GridBagConstraints.HORIZONTAL;
     c.gridx = 2;
     c.gridy = 8;
@@ -279,7 +280,7 @@ public class TransactionFailedPanel extends JFrame {
 
     pane1.add(label, c);
 
-    ltcCostLabel =new JLabel (String.valueOf(this.ltcCost));
+    ltcCostLabel =new JLabel (String.valueOf(this.cost));
     c.gridx = 3;
     c.gridy = 8;
      c.anchor = GridBagConstraints.LINE_START;

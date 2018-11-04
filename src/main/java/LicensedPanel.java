@@ -1,4 +1,4 @@
-package llm;
+package bllm;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -25,6 +25,7 @@ public class LicensedPanel extends JFrame {
   static JLabel licenseKey;
   static JLabel picLabel;
   static JLabel label;
+  private JLabel cryptoLabel;
  
  
   static JButton cancelButton;
@@ -33,7 +34,7 @@ public class LicensedPanel extends JFrame {
  private JLabel  licenseIDLabel;
   private JLabel  transactionIDLabel;
   private JLabel  dollarValueLabel;
-  private JLabel  ltcValueLabel;
+  private JLabel  costValueLabel;
   private JLabel  expiresInDaysLabel;
   private JLabel licenseGrantedDateLabel;
   
@@ -43,7 +44,8 @@ public class LicensedPanel extends JFrame {
   private String transactionID;
   
   private DialogLicenseManager parent;
-  private double ltcSubmitted;
+  private double costSubmitted;
+  private String unitsOfCost;
   private double dollarSubmitted;
   private long licenseDaysRemaining;
   private LocalDate licenseGrantedDate;
@@ -54,7 +56,8 @@ public class LicensedPanel extends JFrame {
 		       String transactionID,
 		       LocalDate licenseGrantedDate,
 		       long licenseDaysRemaining,
-		       double ltcSubmitted,
+		       double costSubmitted,
+		       String unitsOfCost,
 		       double dollarSubmitted) {
 
    
@@ -62,7 +65,7 @@ public class LicensedPanel extends JFrame {
     this.licenseID = licenseID;
     this.transactionID = transactionID;
     this.parent = parent;
-    this.ltcSubmitted = ltcSubmitted;
+    this.costSubmitted = costSubmitted;
     this.dollarSubmitted = dollarSubmitted;
     this.licenseDaysRemaining = licenseDaysRemaining;
     this.setLayout(new BorderLayout());
@@ -103,16 +106,22 @@ public class LicensedPanel extends JFrame {
     c.anchor = GridBagConstraints.LINE_START;
     pane1.add(merchantWalletIDLabel, c);
 
-    JLabel ltclabel = new JLabel(new ImageIcon(llm.LicensedPanel.class.getResource("images/ltc2.png")));
-    //ltclabel.setPreferredSize(new Dimension(180, 180));
     
+  switch(unitsOfCost){
+    case "Bitcoin":
+    cryptoLabel = new JLabel(new ImageIcon(LicensedPanel.class.getResource("images/btc2.png")));
+    break;
+    case "Litecoin":
+    cryptoLabel = new JLabel(new ImageIcon(LicensedPanel.class.getResource("images/ltc2.png")));
+    break;
+  }    
     c.gridx = 3;
     c.gridy = 0;
     c.gridwidth = 3;
     c.gridheight = 6;
     c.weightx = 1;
     c.weighty = 1;
-    pane1.add(ltclabel, c);
+    pane1.add(cryptoLabel, c);
     
     label = new JLabel("Transaction ID: ");
     // c.fill = GridBagConstraints.HORIZONTAL;
@@ -180,11 +189,11 @@ public class LicensedPanel extends JFrame {
     c.anchor = GridBagConstraints.LINE_END;
     pane1.add(label, c);
 
-    ltcValueLabel =new JLabel ("LTC " + String.valueOf(this.ltcSubmitted));  
+    costValueLabel =new JLabel (unitsOfCost + " " + String.valueOf(this.costSubmitted));  
     c.gridx = 1;
     c.gridy = 5;
     c.anchor = GridBagConstraints.LINE_START;
-    pane1.add(ltcValueLabel, c);
+    pane1.add(costValueLabel, c);
 
     label = new JLabel("Dollar transaction  value: ");
     // c.fill = GridBagConstraints.HORIZONTAL;

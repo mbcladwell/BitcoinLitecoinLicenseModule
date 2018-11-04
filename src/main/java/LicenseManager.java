@@ -1,4 +1,4 @@
-package llm;
+package bllm;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -27,6 +27,7 @@ import javax.swing.border.TitledBorder;
  * customer: person purchasing license
  * merchant: person selling license i.e. developer
  * 5dc22fd37b251b871803481fa33ee671b7cc429520428d3fce82451596926ff0
+ * ec9f1f272d76b028ee54b6f650dd2c5f2efa2c74335dfbb07584a511fb0bbc04    bitcoin 0.06
  */
 
 public class LicenseManager   {
@@ -45,7 +46,7 @@ public class LicenseManager   {
  
   // Limits to determine license validity
   private String unitsOfCost;  
-  private double costLTC;  
+  private double cost;  
   private double costDollars;  
   private double costSatoshis;  
   
@@ -56,10 +57,10 @@ public class LicenseManager   {
   private boolean licensed;
   private LocalDate licenseGrantedDate;
   private LocalDate trialStartDate;
-  private double cost;
   private double dollarSubmitted;
   private double ltcSubmitted;
-  private double satoshiSubmitted;
+  private double btcSubmitted;
+  private double satoshisSubmitted;
   private String licenseID;
   private String transactionID;
   private int licenseExpiresInDays;
@@ -70,7 +71,7 @@ public class LicenseManager   {
   private int trialRemainingDays;
   private boolean trialExpired;
   private boolean walletIDnotFound;
-  private  llm.License lic;
+  private  License lic;
   private DialogLicenseManager parent;
 
 
@@ -93,7 +94,7 @@ public class LicenseManager   {
 	  ObjectInputStream in = new ObjectInputStream(file);
 	  System.out.println("License read:  " + licenseFileName);
 	 
-	  this.lic = (llm.License) in.readObject();
+	  this.lic = (License) in.readObject();
 
 	  in.close();
 
@@ -137,7 +138,7 @@ public class LicenseManager   {
 		this.licenseExpired=true;
 	      }
 	  }catch(Exception e){
-		this.licenseRemainingDays = 0;
+	    this.licenseRemainingDays = 0;
 	    this.licenseExpired=true;
 	  }
 
@@ -154,21 +155,18 @@ public class LicenseManager   {
 	  switch(licenseStatus){
 	    
 	  case LicenseManager.LICENSED:
-	    this.satoshiSubmitted = lic.getAmountPaid();	   
+	    this.satoshisSubmitted = lic.getAmountPaid();	   
 	    this.transactionID = lic.getTransactionID();
-	    this.ltcSubmitted = lic.getLTCSubmitted();
 	    this.dollarSubmitted = lic.getDollarSubmitted();
 	    
 	    break;
 	    
 	  case LicenseManager.TRIAL:
 	    this.runCostCalculations();
-   
 	    break;
 	
 	  case LicenseManager.UNLICENSED:
-	    this.runCostCalculations();
-	
+	    this.runCostCalculations();	
 	    break;
 	    
 	  }
@@ -193,16 +191,17 @@ public class LicenseManager   {
 
     case "Dollars":
       this.costDollars = this.cost;
-      this.costLTC = this.costDollars/this.ltcPriceInDollars;
       this.costSatoshis = (this.costDollars/this.btcPriceInDollars)*100000000;
       break;
     case "Litecoin":
-      this.costLTC = this.cost;
-      this.costDollars = this.costLTC*this.ltcPriceInDollars;
+      this.cost = this.cost;
+      this.costDollars = this.cost*this.ltcPriceInDollars;
       this.costSatoshis = (this.costDollars/this.btcPriceInDollars)*100000000;
       break;
-
-      
+    case "Bitcoin":
+      this.costSatoshis = this.cost*100000000;
+      this.costDollars = this.cost*this.btcPriceInDollars;
+      break;
     }
     
   }
@@ -210,7 +209,7 @@ public class LicenseManager   {
   
   public int evaluateTransaction( String transactionID){
 
-    Transaction transaction = new Transaction( transactionID, this.merchantWalletID);
+    Transaction transaction = new Transaction( transactionID, this.merchantWalletID, unitsOfCost);
     this.transactionID = transactionID;
     this.actualConfirmations = transaction.getNumberOfConfirmations();
     this.doubleSpend = transaction.getDoubleSpend();
@@ -218,10 +217,16 @@ public class LicenseManager   {
     this.paymentInSatoshis = transaction.getPaymentInSatoshis();
     this.deltaTime = transaction.getDeltaTime();
     this.walletIDnotFound = transaction.getWalletIDnotFound();
-      
-  
     this.dollarSubmitted = (this.paymentInSatoshis/10000000)*this.btcPriceInDollars;
+
+    switch(unitsOfCost){
+    case "Litecoin":
     this.ltcSubmitted = this.dollarSubmitted/this.ltcPriceInDollars ;
+    break;
+    case "Bitcoin":
+    this.btcSubmitted = this.dollarSubmitted/this.btcPriceInDollars ;
+    break;
+    }
     
     if(this.actualConfirmations >= this.requiredConfirmations &&
        this.doubleSpend == false &&
@@ -231,25 +236,24 @@ public class LicenseManager   {
       this.licenseGrantedDate = LocalDate.now();
       lic.setLicenseGrantedDate( LocalDate.now() );
       this.writeOutNewLicense();
-	    this.licenseStatus = LicenseManager.LICENSED;
-      
-      
+      this.licenseStatus = LicenseManager.LICENSED;        
     }else{
       this.licenseStatus = LicenseManager.TRANSACTION_FAILED;  
     }
+    System.out.println("license status: " + licenseStatus);
     return this.licenseStatus;
   
   }
 
-  
- 
+
 
   public void writeOutNewLicense(){
     try {
       //      this.lic.setLicensed(true);
       this.lic.setLicenseGrantedDate( LocalDate.now() );
       this.lic.setTransactionID( this.transactionID);
-      this.lic.setLTCSubmitted( this.ltcSubmitted);
+      
+      this.lic.setSatoshisSubmitted( this.ltcSubmitted);
       this.lic.setDollarSubmitted( this.dollarSubmitted);
       
       String filename = new String( "./license.ser");
@@ -263,7 +267,7 @@ public class LicenseManager   {
 
       out.close();
       file.close();
-      System.out.println("An updated license file has been serialized to disk.");
+      System.out.println("An updated license file has been serialized to: " + filename);
       parent.displayLicensedPanel();
     }
      catch (IOException ex) {
@@ -295,8 +299,11 @@ public class LicenseManager   {
   public int getLicenseStatus(){
     return this.licenseStatus;
   }
-  public double getCostLTC(){
-    return this.costLTC;
+  public double getCost(){
+    return this.cost;
+  }
+  public String getUnitsOfCost(){
+    return this.unitsOfCost;
   }
   public double getCostDollars(){
     return this.costDollars;

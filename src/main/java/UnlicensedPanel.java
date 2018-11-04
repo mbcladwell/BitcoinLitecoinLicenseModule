@@ -1,4 +1,4 @@
-package llm;
+package bllm;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -32,10 +32,11 @@ public class UnlicensedPanel extends JFrame {
   private JLabel  doubleSpendLabel;
   private JLabel  elapsedTimeLabel;
   public JLabel  confirmationsLabel;
-  private JLabel  dollarValueLabel;
-  private JLabel  ltcValueLabel;
+  private URL imageURL;
+ 
 
-  private double costLTC;
+  private double cost;
+  private String unitsOfCost;
   private String merchantWalletID;
   private long requiredConfirmations;
   private int expiresInHours;
@@ -45,27 +46,36 @@ public class UnlicensedPanel extends JFrame {
   public UnlicensedPanel(DialogLicenseManager dlm,
 			 boolean useTrialBanner,
 			 int trialExpiresInDays,
-			 double costLTC,
+			 double cost,
+			 String unitsOfCost,
 			 String merchantWalletID,
 			 String licenseID,
 			 long requiredConfirmations,
 			 int expiresInHours,
 			 LicenseManager lm) {
 
-    this.costLTC = costLTC;
+    this.cost = cost;
     this.merchantWalletID = merchantWalletID;
     this.requiredConfirmations = requiredConfirmations;
     this.expiresInHours = expiresInHours;
     this.parent = parent;
     
     this.setLayout(new BorderLayout());
-   this.setTitle("Litecoin License Module  " + LocalDate.now() );
+   this.setTitle("Cryptocurrency License Module  " + LocalDate.now() );
     this.setResizable(true);
 
+  switch(unitsOfCost){
 
-    URL imageURL = llm.UnlicensedPanel.class.getResource("images/ltc.png");
-    ImageIcon imgIcon =   new ImageIcon( imageURL);
-    this.setIconImage(imgIcon.getImage());
+    case "Bitcoin":
+    imageURL = bllm.UnlicensedPanel.class.getResource("images/btc2.png");
+    break;
+    case "Litecoin":
+    imageURL = bllm.UnlicensedPanel.class.getResource("images/ltc.png");
+    break;
+  }
+  
+  // ImageIcon imgIcon =   new ImageIcon( imageURL);
+  // this.setIconImage(imgIcon.getImage());
  
 
     JPanel licenseLabelPane = new JPanel(new BorderLayout());
@@ -105,7 +115,7 @@ public class UnlicensedPanel extends JFrame {
     c.anchor = GridBagConstraints.LINE_START;
     pane1.add(label, c);
 
-    label = new JLabel("Transfer " +  String.valueOf(new java.text.DecimalFormat("######.######").format(this.costLTC + this.costLTC*0.02)) +    " Litecoin to wallet ID: ");
+    label = new JLabel("Transfer " +  String.valueOf(new java.text.DecimalFormat("######.######").format(this.cost)) + " " + unitsOfCost + " to wallet ID: ");
     c.gridx = 1;
     c.gridy = 1;
     c.gridwidth = 1;
@@ -126,7 +136,7 @@ public class UnlicensedPanel extends JFrame {
     
     try {   
   
-      ImageIcon clipImgIcon =  new ImageIcon(llm.UnlicensedPanel.class.getResource("images/clipboard2.png"));
+      ImageIcon clipImgIcon =  new ImageIcon(UnlicensedPanel.class.getResource("images/clipboard2.png"));
       clipboardButton.setIcon( new ImageIcon(clipImgIcon.getImage().getScaledInstance( 20, 20,  java.awt.Image.SCALE_SMOOTH )) );
     } catch (Exception ex) {
       System.out.println(ex);
@@ -153,7 +163,7 @@ public class UnlicensedPanel extends JFrame {
     
     try {   
   
-      ImageIcon qrImgIcon =  new ImageIcon(llm.UnlicensedPanel.class.getResource("images/qr.png"));
+      ImageIcon qrImgIcon =  new ImageIcon(UnlicensedPanel.class.getResource("images/qr.png"));
       qrButton.setIcon( new ImageIcon(qrImgIcon.getImage().getScaledInstance( 20, 20,  java.awt.Image.SCALE_SMOOTH )) );
     } catch (Exception ex) {
       System.out.println(ex);
@@ -166,7 +176,7 @@ public class UnlicensedPanel extends JFrame {
     qrButton.addActionListener(
         (new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
-	      new DialogQRCode( merchantWalletID, String.valueOf(new java.text.DecimalFormat("######.######").format(costLTC + costLTC*0.02)));	     
+	      new DialogQRCode( unitsOfCost,  merchantWalletID, String.valueOf(new java.text.DecimalFormat("######.######").format(cost)));	     
 	    }
 	  }));
     pane1.add(qrButton, c);
@@ -228,8 +238,16 @@ public class UnlicensedPanel extends JFrame {
         (new ActionListener() {
           public void actionPerformed(ActionEvent e) {
 	    if( textField.getText() != null && !textField.getText().isEmpty()) {
-	      	    lm.evaluateTransaction( textField.getText() );
-	     }else{
+	      switch( lm.evaluateTransaction( textField.getText() ) ){
+	      case 4: //transaction failed
+		  dlm.displayTransactionFailedPanel();
+		  break;
+	      case 3: // licensed
+		dlm.displayLicensedPanel();
+		break;
+	      
+	      }
+	    } else{
 	      JOptionPane.showMessageDialog( parent,
 					     "Enter a valid transaction ID in the text box.",
 					     "Invalid transaction",

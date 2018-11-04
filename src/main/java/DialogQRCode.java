@@ -1,4 +1,4 @@
-package llm;
+package bllm;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -34,9 +34,10 @@ public class DialogQRCode extends JFrame  {
   private static final long serialVersionUID = 1L;
   //private JPanel panel;
 
-  public DialogQRCode(String walletid, String amountOfLTC  ) {
+  public DialogQRCode(String unitsOfCost, String walletid, String amountOfLTC  ) {
+    
 
-    String qrCodeText =  "litecoin: " + walletid +  "?amount=" + amountOfLTC;
+    String qrCodeText = unitsOfCost +  " " + walletid +  "?amount=" + amountOfLTC;
     try{
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         BitMatrix bitMatrix = qrCodeWriter.encode(qrCodeText, BarcodeFormat.QR_CODE, 350, 350);

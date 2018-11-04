@@ -1,4 +1,4 @@
-package llm;
+package bllm;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -144,6 +144,7 @@ public class DialogLicenseManager extends JFrame  {
     
 
 	}
+  
 
   public void displayLicensedPanel(){
 	    pane3 = new LicensedPanel(this,
@@ -152,15 +153,17 @@ public class DialogLicenseManager extends JFrame  {
 				      lm.getTransactionID(),
 				      lm.getLicenseGrantedDate(),
 				      lm.getLicenseRemainingDays(),
-				      lm.getLTCSubmitted(),
+				      lm.getCost(),
+				      lm.getUnitsOfCost(),
 				      lm.getDollarSubmitted()); 
   }
   
   public void displayUnlicensedPanel(){
-	      pane1 = new llm.UnlicensedPanel(this,
+	      pane1 = new UnlicensedPanel(this,
 					  this.displayTrialBanner,
 					  lm.getTrialRemainingDays(),
-					  lm.getCostLTC(),
+					  lm.getCost(),
+					      lm.getUnitsOfCost(),
 					  lm.getMerchantWalletID(),
 					  lm.getLicenseID(),
 					  lm.getRequiredConfirmations(),
@@ -172,7 +175,8 @@ public class DialogLicenseManager extends JFrame  {
   public void displayTransactionFailedPanel(){
     pane2 = new TransactionFailedPanel(this,
 				       lm.getCostDollars(),
-				       lm.getCostLTC(),
+				       lm.getCost(),
+				       lm.getUnitsOfCost(),
 				       lm.getMerchantWalletID(),
 				       lm.getLicenseID(),
 				       lm.getTransactionID(),
