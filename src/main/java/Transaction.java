@@ -12,13 +12,13 @@ public class Transaction {
   private boolean doubleSpend;
   private LocalDate transactionDate;
   private long deltaTime;
-  private long paymentInSatoshis = 0; // value of LiteCoin Transaction
+  private long paymentInSatoshis = 0; // value of LiteCoin Transaction in Bitcoin!!
   private String merchantWalletID;
   private String[] addresses;
   private boolean walletIDnotFound = false;
   private URL url;
 
-  public LitecoinTransactionObject.Output[] outputs;
+  public TransactionObject.Output[] outputs;
 
   /**
    * Create a LiteCoin Transaction Object. This object will provide access to transaction
@@ -40,17 +40,17 @@ public class Transaction {
 
       BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));
       Gson gson = new GsonBuilder().create();
-      LitecoinTransactionObject lto = gson.fromJson(reader, LitecoinTransactionObject.class);
+      TransactionObject to = gson.fromJson(reader, TransactionObject.class);
 
       this.merchantWalletID = merchantWalletID;
-      this.numberOfConfirmations = lto.getConfirmations();
-      this.doubleSpend = lto.getDoubleSpend();
-      Instant instant = Instant.parse(lto.getTransactionDate());
+      this.numberOfConfirmations = to.getConfirmations();
+      this.doubleSpend = to.getDoubleSpend();
+      Instant instant = Instant.parse(to.getTransactionDate());
       LocalDateTime ldt = LocalDateTime.ofInstant(instant, ZoneId.of(ZoneOffset.UTC.getId()));
       this.transactionDate = ldt.toLocalDate();
       this.deltaTime = Duration.between(instant, Instant.now()).toHours();
 
-      outputs = lto.getOutputs();
+      outputs = to.getOutputs();
 
       for (int i = 0; i <= outputs.length - 1; i++) {
         try {

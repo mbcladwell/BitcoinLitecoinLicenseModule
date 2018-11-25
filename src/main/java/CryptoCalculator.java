@@ -20,6 +20,7 @@ public class CryptoCalculator {
 
       LitecoinPriceObject lpo = gson.fromJson(reader, LitecoinPriceObject.class);
       this.ltcPriceInDollars = lpo.data.quotes.USD.price;
+      System.out.println("Current LTC value in dollars: " + this.ltcPriceInDollars);
 
     } catch (Exception e) {
       System.out.println("Problems retrieving Litecoin price from coinmarketcap.com!");

@@ -34,10 +34,10 @@ public class DialogQRCode extends JFrame  {
   private static final long serialVersionUID = 1L;
   //private JPanel panel;
 
-  public DialogQRCode(String unitsOfCost, String walletid, String amountOfLTC  ) {
+  public DialogQRCode(String unitsOfCost, String walletid, String amountOfCrypto  ) {
     
 
-    String qrCodeText = unitsOfCost +  " " + walletid +  "?amount=" + amountOfLTC;
+    String qrCodeText = unitsOfCost +  " " + walletid +  "?amount=" + amountOfCrypto;
     try{
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         BitMatrix bitMatrix = qrCodeWriter.encode(qrCodeText, BarcodeFormat.QR_CODE, 350, 350);
@@ -50,7 +50,7 @@ public class DialogQRCode extends JFrame  {
 	  JLabel qrLabel = new JLabel(new ImageIcon(bi));
            qrPanel.add(qrLabel);
 	   JPanel textPanel = new JPanel();
-	   JLabel textLabel = new JLabel("<html><body>litecoin: " + walletid + "<br>amount=" + amountOfLTC + "</body></html>");
+	   JLabel textLabel = new JLabel("<html><body>litecoin: " + walletid + "<br>amount=" + amountOfCrypto + "</body></html>");
 	   textPanel.add(textLabel);
 	   this.add(qrPanel, BorderLayout.CENTER);
 	   this.add(textPanel, BorderLayout.SOUTH);

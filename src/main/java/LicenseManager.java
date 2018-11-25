@@ -33,7 +33,7 @@ import javax.swing.border.TitledBorder;
 public class LicenseManager   {
 
 
-  private long paymentInSatoshis;  //value of LiteCoin Transaction
+  //private long paymentInSatoshis;  
   private long deltaTime;  // time difference between now and transaction time in hours
   private long requiredConfirmations;
   private long actualConfirmations;
@@ -46,9 +46,13 @@ public class LicenseManager   {
  
   // Limits to determine license validity
   private String unitsOfCost;  
-  private double cost;  
-  private double costDollars;  
+  private double cost;  //the requested amount in (undetermined) units
+  private double costDollars;
+  private double costLTC;
+  private double costBTC;
   private double costSatoshis;  
+  private double payment;
+  private String unitsOfPayment;
   
   private String merchantWalletID;
 
@@ -85,7 +89,6 @@ public class LicenseManager   {
   public LicenseManager( DialogLicenseManager _parent, String _licenseFileName ) {
     this.parent = _parent;
     
-    //String filename = "/home/mbc/syncd/prog/llm/build/classes/java/main/license.ser";
        String licenseFileName = _licenseFileName;
       if( new File(licenseFileName).exists()){
 
@@ -107,6 +110,7 @@ public class LicenseManager   {
 	  this.licenseExpiresInDays = lic.getLicenseExpiresInDays();
 	  this.trialExpiresInDays = lic.getTrialExpiresInDays();
           this.licenseGrantedDate = lic.getLicenseGrantedDate();
+	  this.unitsOfPayment = lic.getUnitsOfPayment();
 
 	  if( null == lic.getTrialStartDate()){
 	    lic.setTrialStartDate(LocalDate.now());
@@ -132,7 +136,11 @@ public class LicenseManager   {
 		  
 	  try{ int elapsedLicenseDays = Period.between(this.licenseGrantedDate, LocalDate.now()).getDays();
 	    this.licenseRemainingDays = this.licenseExpiresInDays - elapsedLicenseDays;
-	      if( this.licenseRemainingDays > 0){
+	    System.out.println("expires in: " + Integer.toString(this.licenseExpiresInDays) );
+	    System.out.println("elapsed: " + Integer.toString(elapsedLicenseDays) );
+	    System.out.println("remaining: " + Integer.toString(this.licenseRemainingDays) );
+	    
+	    if( this.licenseRemainingDays > 0){
 		this.licenseExpired=false;}else{
 		this.licenseRemainingDays = 0;
 		this.licenseExpired=true;
@@ -180,7 +188,8 @@ public class LicenseManager   {
 
   }
 
-  
+  //cost calculations require an internet connection.
+  //run only if needed
   public void runCostCalculations(){
 
     CryptoCalculator cryptoCalculator = new CryptoCalculator();
@@ -191,16 +200,28 @@ public class LicenseManager   {
 
     case "Dollars":
       this.costDollars = this.cost;
-      this.costSatoshis = (this.costDollars/this.btcPriceInDollars)*100000000;
+      this.costBTC = (this.costDollars/this.btcPriceInDollars);
+      this.costLTC = (this.costDollars/this.ltcPriceInDollars);
+      switch(unitsOfPayment){
+      case "Bitcoin":
+	this.costSatoshis = (this.costDollars/this.btcPriceInDollars)*100000000;
+	break;
+      case "Litecoin":
+	this.costSatoshis = (this.costDollars/this.ltcPriceInDollars)*100000000;
+	break;
+      }
       break;
     case "Litecoin":
-      this.cost = this.cost;
-      this.costDollars = this.cost*this.ltcPriceInDollars;
-      this.costSatoshis = (this.costDollars/this.btcPriceInDollars)*100000000;
+      this.costLTC = this.cost;
+      this.costDollars = this.costLTC*this.ltcPriceInDollars;
+      this.costBTC = this.costDollars/this.btcPriceInDollars;
+      this.costSatoshis = (this.costDollars/this.ltcPriceInDollars)*100000000;
       break;
     case "Bitcoin":
-      this.costSatoshis = this.cost*100000000;
-      this.costDollars = this.cost*this.btcPriceInDollars;
+      this.costBTC = this.cost;
+      this.costSatoshis = this.costBTC*100000000;
+      this.costDollars = this.costBTC*this.btcPriceInDollars;
+      this.costLTC = (this.costDollars/this.ltcPriceInDollars);
       break;
     }
     
@@ -214,23 +235,28 @@ public class LicenseManager   {
     this.actualConfirmations = transaction.getNumberOfConfirmations();
     this.doubleSpend = transaction.getDoubleSpend();
     this.transactionDate =  transaction.getTransactionDate();
-    this.paymentInSatoshis = transaction.getPaymentInSatoshis();
+    this.satoshisSubmitted = transaction.getPaymentInSatoshis();
     this.deltaTime = transaction.getDeltaTime();
     this.walletIDnotFound = transaction.getWalletIDnotFound();
-    this.dollarSubmitted = (this.paymentInSatoshis/10000000)*this.btcPriceInDollars;
 
-    switch(unitsOfCost){
+    switch(unitsOfPayment){
     case "Litecoin":
-    this.ltcSubmitted = this.dollarSubmitted/this.ltcPriceInDollars ;
+    this.dollarSubmitted = (this.satoshisSubmitted/100000000)*this.ltcPriceInDollars;
+    this.ltcSubmitted = this.dollarSubmitted/this.ltcPriceInDollars;
+    this.payment = this.ltcSubmitted;
+    this.unitsOfPayment = "Litecoin";
     break;
     case "Bitcoin":
+      this.dollarSubmitted = (this.satoshisSubmitted/100000000)*this.btcPriceInDollars;
     this.btcSubmitted = this.dollarSubmitted/this.btcPriceInDollars ;
+    this.payment = this.btcSubmitted;
+    this.unitsOfPayment = "Bitcoin";
     break;
     }
     
     if(this.actualConfirmations >= this.requiredConfirmations &&
        this.doubleSpend == false &&
-       this.paymentInSatoshis >= this.costSatoshis &&
+       this.satoshisSubmitted >= this.costSatoshis &&
        this.deltaTime <= this.transactionExpiresInHours
        ){
       this.licenseGrantedDate = LocalDate.now();
@@ -253,7 +279,7 @@ public class LicenseManager   {
       this.lic.setLicenseGrantedDate( LocalDate.now() );
       this.lic.setTransactionID( this.transactionID);
       
-      this.lic.setSatoshisSubmitted( this.ltcSubmitted);
+      this.lic.setSatoshisSubmitted( this.satoshisSubmitted);
       this.lic.setDollarSubmitted( this.dollarSubmitted);
       
       String filename = new String( "./license.ser");
@@ -328,6 +354,20 @@ public class LicenseManager   {
   public double getLTCSubmitted(){
     return this.ltcSubmitted;
   }
+
+  public double geBTCSubmitted(){
+    return this.btcSubmitted;
+  }
+
+  public double getPayment(){
+    return this.payment;
+  }
+
+  public String getUnitsOfPayment(){
+    return this.unitsOfPayment;
+  }
+
+  
   public int getTransactionExpiresInHours(){
     return this.transactionExpiresInHours;
   }

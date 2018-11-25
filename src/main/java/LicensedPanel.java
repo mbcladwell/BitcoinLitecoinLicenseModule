@@ -44,7 +44,8 @@ public class LicensedPanel extends JFrame {
   private String transactionID;
   
   private DialogLicenseManager parent;
-  private double costSubmitted;
+  private double payment;
+  private String unitsOfPayment;
   private String unitsOfCost;
   private double dollarSubmitted;
   private long licenseDaysRemaining;
@@ -56,8 +57,8 @@ public class LicensedPanel extends JFrame {
 		       String transactionID,
 		       LocalDate licenseGrantedDate,
 		       long licenseDaysRemaining,
-		       double costSubmitted,
-		       String unitsOfCost,
+		       double payment,
+		       String unitsOfPayment,
 		       double dollarSubmitted) {
 
    
@@ -65,7 +66,8 @@ public class LicensedPanel extends JFrame {
     this.licenseID = licenseID;
     this.transactionID = transactionID;
     this.parent = parent;
-    this.costSubmitted = costSubmitted;
+    this.payment = payment;
+    this.unitsOfPayment = unitsOfPayment;
     this.dollarSubmitted = dollarSubmitted;
     this.licenseDaysRemaining = licenseDaysRemaining;
     this.setLayout(new BorderLayout());
@@ -107,7 +109,7 @@ public class LicensedPanel extends JFrame {
     pane1.add(merchantWalletIDLabel, c);
 
     
-  switch(unitsOfCost){
+  switch(unitsOfPayment){
     case "Bitcoin":
     cryptoLabel = new JLabel(new ImageIcon(LicensedPanel.class.getResource("images/btc2.png")));
     break;
@@ -182,14 +184,14 @@ public class LicensedPanel extends JFrame {
     c.anchor = GridBagConstraints.LINE_START;
     pane1.add(expiresInDaysLabel, c);
     
-    label = new JLabel("Litecoin transaction value: ");
+    label = new JLabel("Transaction value: ");
     // c.fill = GridBagConstraints.HORIZONTAL;
     c.gridx = 0;
     c.gridy = 5;
     c.anchor = GridBagConstraints.LINE_END;
     pane1.add(label, c);
 
-    costValueLabel =new JLabel (unitsOfCost + " " + String.valueOf(this.costSubmitted));  
+    costValueLabel =new JLabel ( String.valueOf(this.payment) + " " + unitsOfPayment );  
     c.gridx = 1;
     c.gridy = 5;
     c.anchor = GridBagConstraints.LINE_START;
@@ -202,7 +204,10 @@ public class LicensedPanel extends JFrame {
     c.anchor = GridBagConstraints.LINE_END;
     pane1.add(label, c);
 
-    dollarValueLabel =new JLabel ("$" + String.valueOf(this.dollarSubmitted));  
+    java.text.DecimalFormat df = new java.text.DecimalFormat("##############.##");
+    df.setRoundingMode(java.math.RoundingMode.CEILING);
+    
+    dollarValueLabel =new JLabel ("$" + String.valueOf(df.format(this.dollarSubmitted) ));  
     c.gridx = 1;
     c.gridy = 6;
     c.anchor = GridBagConstraints.LINE_START;

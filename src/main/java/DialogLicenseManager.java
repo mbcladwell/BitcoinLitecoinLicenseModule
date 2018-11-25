@@ -108,6 +108,7 @@ public class DialogLicenseManager extends JFrame  {
     this.licenseFileName = _licenseFileName;
     lm = new LicenseManager( this, licenseFileName);
     licenseStatus = lm.getLicenseStatus();
+    this.unitsOfCost = lm.getUnitsOfCost();
 
 	  switch(licenseStatus){
 	    
@@ -135,17 +136,11 @@ public class DialogLicenseManager extends JFrame  {
 	  }
 	  
 
-
-	  
-	  //    this.parentPane = new JPanel(new BorderLayout());
-	  // this.parentPane.setBorder(BorderFactory.createRaisedBevelBorder());
-
-	  //cards = new JPanel(this.cl);
-    
-
 	}
+    
   
 
+  
   public void displayLicensedPanel(){
 	    pane3 = new LicensedPanel(this,
 				      lm.getMerchantWalletID(),
@@ -153,8 +148,8 @@ public class DialogLicenseManager extends JFrame  {
 				      lm.getTransactionID(),
 				      lm.getLicenseGrantedDate(),
 				      lm.getLicenseRemainingDays(),
-				      lm.getCost(),
-				      lm.getUnitsOfCost(),
+				      lm.getPayment(),  
+				      lm.getUnitsOfPayment(),
 				      lm.getDollarSubmitted()); 
   }
   
