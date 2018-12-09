@@ -1,6 +1,0 @@
-Manifest-Version: 1.0
-Implementation-Title: Bitcoin/Litecoin License Manager
-Implementation-Version: 0.1
-provider: net.stihie
-Main-Class: bllm.DialogLicenseManager
-
