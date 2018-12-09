@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import java.io.*;
 import java.net.*;
 import java.time.*;
+import java.util.logging.*;
 
 public class Transaction {
 
@@ -17,6 +18,7 @@ public class Transaction {
   private String[] addresses;
   private boolean walletIDnotFound = false;
   private URL url;
+  private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
   public TransactionObject.Output[] outputs;
 
@@ -58,7 +60,7 @@ public class Transaction {
 
           for (int j = 0; j <= addresses.length - 1; j++) {
             try {
-              System.out.println("address: " + addresses[j]);
+              LOGGER.info("address: " + addresses[j]);
               if (this.merchantWalletID.equals(addresses[j])) {
                 this.paymentInSatoshis = outputs[i].getValue();
               } else { // wallet not part of transaction
@@ -75,8 +77,8 @@ public class Transaction {
       if (this.paymentInSatoshis == 0) {}
 
     } catch (Exception e) {
-      System.out.println("Problems retrieving transaction ID: " + transactionID);
-      System.out.println(e.toString());
+      LOGGER.severe("Problems retrieving transaction ID: " + transactionID);
+      LOGGER.severe(e.toString());
     }
   }
 
@@ -93,7 +95,6 @@ public class Transaction {
   }
 
   public long getPaymentInSatoshis() {
-    System.out.println("in getter  " + this.paymentInSatoshis);
     return this.paymentInSatoshis;
   }
   /** Time in hours between now and transaction execution */

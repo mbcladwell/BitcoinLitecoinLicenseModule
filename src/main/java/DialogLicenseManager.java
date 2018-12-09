@@ -4,7 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.datatransfer.*;
 import java.awt.Toolkit;
-
+import java.util.logging.*;
 
 //import java.io.*;
 //import java.io.IOException;
@@ -103,8 +103,11 @@ public class DialogLicenseManager extends JFrame  {
   private static final int TRANSACTION_FAILED = 4;
   private String licenseFileName;
   private LicenseManager lm;
+
+  private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
   
   public DialogLicenseManager( String _licenseFileName ) {
+    LOGGER.setLevel(Level.INFO);
     this.licenseFileName = _licenseFileName;
     lm = new LicenseManager( this, licenseFileName);
     licenseStatus = lm.getLicenseStatus();
@@ -119,7 +122,6 @@ public class DialogLicenseManager extends JFrame  {
 	  case DialogLicenseManager.TRIAL:
 	      this.displayTrialBanner = true;
 	      this.displayUnlicensedPanel();
-	      
 	    break;
 	
 	  case DialogLicenseManager.UNLICENSED:

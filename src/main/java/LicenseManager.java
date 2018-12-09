@@ -20,6 +20,7 @@ import java.time.temporal.ChronoUnit;
 
 import java.nio.charset.Charset;
 import javax.swing.border.TitledBorder;
+import java.util.logging.*;
 
 
 /*
@@ -84,7 +85,8 @@ public class LicenseManager   {
   private static final int TRIAL = 2;
   private static final int LICENSED = 3;
   private static final int TRANSACTION_FAILED = 4;
-  
+    private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
   
   public LicenseManager( DialogLicenseManager _parent, String _licenseFileName ) {
     this.parent = _parent;
@@ -95,7 +97,7 @@ public class LicenseManager   {
 	try {
 	  FileInputStream file = new FileInputStream(licenseFileName);
 	  ObjectInputStream in = new ObjectInputStream(file);
-	  System.out.println("License read:  " + licenseFileName);
+	  LOGGER.info("License read:  " + licenseFileName);
 	 
 	  this.lic = (License) in.readObject();
 
@@ -136,9 +138,9 @@ public class LicenseManager   {
 		  
 	  try{ int elapsedLicenseDays = Period.between(this.licenseGrantedDate, LocalDate.now()).getDays();
 	    this.licenseRemainingDays = this.licenseExpiresInDays - elapsedLicenseDays;
-	    System.out.println("expires in: " + Integer.toString(this.licenseExpiresInDays) );
-	    System.out.println("elapsed: " + Integer.toString(elapsedLicenseDays) );
-	    System.out.println("remaining: " + Integer.toString(this.licenseRemainingDays) );
+	    LOGGER.info("expires in days: " + Integer.toString(this.licenseExpiresInDays) );
+	    LOGGER.info("elapsed license days: " + Integer.toString(elapsedLicenseDays) );
+	    LOGGER.info("remaining license days: " + Integer.toString(this.licenseRemainingDays) );
 	    
 	    if( this.licenseRemainingDays > 0){
 		this.licenseExpired=false;}else{
@@ -315,7 +317,7 @@ public class LicenseManager   {
 
       out.close();
       file.close();
-      System.out.println("License written with trial period start date.");
+      LOGGER.info("License written with trial period start date: " + lic.getTrialStartDate());
     }
      catch (IOException ex) {
       System.out.println("IOException is caught");

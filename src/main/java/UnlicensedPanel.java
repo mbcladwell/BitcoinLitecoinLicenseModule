@@ -14,11 +14,12 @@ import javax.swing.*;
 import java.awt.datatransfer.*;
 import java.time.temporal.Temporal;
 import java.time.temporal.ChronoUnit;
-
+import java.util.logging.*;
 
 public class UnlicensedPanel extends JFrame {
 
   private static final long serialVersionUID = 1L;
+    private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
   static JButton button;
   static JLabel licenseKey;
@@ -139,7 +140,7 @@ public class UnlicensedPanel extends JFrame {
       ImageIcon clipImgIcon =  new ImageIcon(UnlicensedPanel.class.getResource("images/clipboard2.png"));
       clipboardButton.setIcon( new ImageIcon(clipImgIcon.getImage().getScaledInstance( 20, 20,  java.awt.Image.SCALE_SMOOTH )) );
     } catch (Exception ex) {
-      System.out.println(ex);
+      LOGGER.severe("Exception: " +  ex.getMessage());
     } 
     
     c.gridx = 4;
@@ -166,7 +167,7 @@ public class UnlicensedPanel extends JFrame {
       ImageIcon qrImgIcon =  new ImageIcon(UnlicensedPanel.class.getResource("images/qr.png"));
       qrButton.setIcon( new ImageIcon(qrImgIcon.getImage().getScaledInstance( 20, 20,  java.awt.Image.SCALE_SMOOTH )) );
     } catch (Exception ex) {
-      System.out.println(ex);
+      LOGGER.severe("Exception: " + ex.getMessage());
     } 
     
     c.gridx = 5;

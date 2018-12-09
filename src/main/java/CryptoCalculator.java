@@ -4,11 +4,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.*;
 import java.net.*;
+import java.util.logging.*;
 
 public class CryptoCalculator {
 
   public double btcPriceInDollars;
   public double ltcPriceInDollars;
+
+  private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
   public CryptoCalculator() {
     try {
@@ -20,11 +23,11 @@ public class CryptoCalculator {
 
       LitecoinPriceObject lpo = gson.fromJson(reader, LitecoinPriceObject.class);
       this.ltcPriceInDollars = lpo.data.quotes.USD.price;
-      System.out.println("Current LTC value in dollars: " + this.ltcPriceInDollars);
+      LOGGER.info("Current LTC value in dollars: " + this.ltcPriceInDollars);
 
     } catch (Exception e) {
-      System.out.println("Problems retrieving Litecoin price from coinmarketcap.com!");
-      System.out.println(e.toString());
+      LOGGER.severe("Problems retrieving Litecoin price from coinmarketcap.com!");
+      LOGGER.severe(e.toString());
     }
     try {
       URL url = new URL("https://blockchain.info/charts/market-price?format=json");
@@ -34,11 +37,11 @@ public class CryptoCalculator {
       BitcoinPriceObject bpo = gson.fromJson(reader, BitcoinPriceObject.class);
 
       this.btcPriceInDollars = bpo.getCurrentValue();
-      System.out.println("Current BTC value in dollars: " + this.btcPriceInDollars);
+      LOGGER.info("Current BTC value in dollars: " + this.btcPriceInDollars);
 
     } catch (Exception e) {
-      System.out.println("Problems retrieving Bitcoin price from blockchain.info!");
-      System.out.println(e.toString());
+      LOGGER.severe("Problems retrieving Bitcoin price from blockchain.info!");
+      LOGGER.severe(e.toString());
     }
   }
 
