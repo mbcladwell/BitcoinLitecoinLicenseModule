@@ -72,12 +72,13 @@ public class DialogLicenseManager extends JFrame {
   private String licenseFileName;
   private String privateKey;
   private LicenseManager lm;
+  private String title;
 
   private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
   public DialogLicenseManager(String _title, String _licenseFileName, String _privateKey) {
     LOGGER.setLevel(Level.INFO);
-    this.setTitle(_title + " " + LocalDate.now());
+    this.title = _title;
     this.licenseFileName = _licenseFileName;
     this.privateKey = _privateKey;
     lm = new LicenseManager(this, licenseFileName, privateKey);
@@ -104,6 +105,7 @@ public class DialogLicenseManager extends JFrame {
         this.displayTransactionFailedPanel();
         break;
     }
+    this.setVisible(true);
   }
 
   public void displayLicensedPanel() {
@@ -117,7 +119,8 @@ public class DialogLicenseManager extends JFrame {
             lm.getLicenseRemainingDays(),
             lm.getPayment(),
             lm.getUnitsOfPayment(),
-            lm.getDollarSubmitted());
+            lm.getDollarSubmitted(),
+            this.title);
   }
 
   public void displayUnlicensedPanel() {
@@ -132,7 +135,8 @@ public class DialogLicenseManager extends JFrame {
             lm.getLicenseID(),
             lm.getRequiredConfirmations(),
             lm.getTransactionExpiresInHours(),
-            this.lm);
+            this.lm,
+            this.title);
   }
 
   public void displayTransactionFailedPanel() {
@@ -152,6 +156,7 @@ public class DialogLicenseManager extends JFrame {
             lm.getActualConfirmations(),
             lm.getDollarSubmitted(),
             lm.getLTCSubmitted(),
-            lm.getWalletIDnotFound());
+            lm.getWalletIDnotFound(),
+            this.title);
   }
 }

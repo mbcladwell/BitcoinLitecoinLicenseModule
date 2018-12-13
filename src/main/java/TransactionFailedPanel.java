@@ -48,6 +48,7 @@ public class TransactionFailedPanel extends JFrame {
   private DialogLicenseManager parent;
   private boolean doubleSpend;
   private long deltaTime;
+  private String title;
   private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
   public TransactionFailedPanel(
@@ -65,7 +66,8 @@ public class TransactionFailedPanel extends JFrame {
       long actualConfirmations,
       double dollarSubmitted,
       double costSubmitted,
-      boolean walletIDnotFound) {
+      boolean walletIDnotFound,
+      String title) {
 
     this.dollarCost = dollarCost;
     this.cost = cost;
@@ -82,6 +84,7 @@ public class TransactionFailedPanel extends JFrame {
     this.costSubmitted = costSubmitted;
     this.walletIDnotFound = walletIDnotFound;
     this.transactionID = transactionID;
+    this.setTitle(title);
 
     JPanel licenseLabelPane = new JPanel(new BorderLayout());
     licenseLabelPane.setBorder(BorderFactory.createTitledBorder(""));

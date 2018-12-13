@@ -115,7 +115,6 @@ public class LicenseManager   {
       if( new File(licenseFileName).exists()){
 
 	try {
-
 	  CipherInputStream cipherInputStream =
 	    new CipherInputStream(new BufferedInputStream(new FileInputStream(licenseFileName)), cipher);
 	  ObjectInputStream inputStream = new ObjectInputStream(cipherInputStream);
@@ -208,9 +207,9 @@ public class LicenseManager   {
 	  LOGGER.info("ClassNotFoundException is caught");
 	} catch (IllegalBlockSizeException ex) {
 
-    } catch (BadPaddingException ex) {
+	} catch (BadPaddingException ex) {
 
-    }
+	}
       }
 
 
@@ -329,6 +328,10 @@ public class LicenseManager   {
     }
   }
 
+  /**
+   *Activated upon initial launch of License Module
+   *
+   */
   public void writeOutTrialLicense(){
     try {   
       String fileName = new String( "./license.ser");

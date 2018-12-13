@@ -39,10 +39,11 @@ public class UnlicensedPanel extends JFrame {
   private double cost;
   private String unitsOfCost;
   private String merchantWalletID;
-  private long requiredConfirmations;
+  private int requiredConfirmations;
   private int expiresInHours;
   private DialogLicenseManager parent;
   private LicenseManager lm;
+  private String title;
   
   public UnlicensedPanel(DialogLicenseManager dlm,
 			 boolean useTrialBanner,
@@ -51,9 +52,10 @@ public class UnlicensedPanel extends JFrame {
 			 String unitsOfCost,
 			 String merchantWalletID,
 			 String licenseID,
-			 long requiredConfirmations,
+			 int requiredConfirmations,
 			 int expiresInHours,
-			 LicenseManager lm) {
+			 LicenseManager lm,
+			 String title) {
 
     this.cost = cost;
     this.merchantWalletID = merchantWalletID;
@@ -64,7 +66,7 @@ public class UnlicensedPanel extends JFrame {
     this.setLayout(new BorderLayout());
     // this.setTitle("Cryptocurrency License Module  " + LocalDate.now() );
     this.setResizable(true);
-
+    this.setTitle(title);
   switch(unitsOfCost){
 
     case "Bitcoin":
@@ -190,7 +192,18 @@ public class UnlicensedPanel extends JFrame {
     c.gridheight = 1;
     pane1.add(label, c);
 
-    label = new JLabel("Wait for " + this.requiredConfirmations + " confirmations.");
+    String labelText;
+    switch(this.requiredConfirmations){
+    case 0:
+      labelText = new String("No waiting for confirmations required.");
+      break;
+    default:
+      labelText = new String( "Wait for " + this.requiredConfirmations + " confirmations.");
+      break;
+    }
+
+    
+    label = new JLabel(labelText);
     c.gridx = 1;
     c.gridy = 2;
     c.gridwidth = 1;

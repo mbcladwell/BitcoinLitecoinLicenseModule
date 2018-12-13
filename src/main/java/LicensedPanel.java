@@ -50,6 +50,7 @@ public class LicensedPanel extends JFrame {
   private double dollarSubmitted;
   private long licenseDaysRemaining;
   private LocalDate licenseGrantedDate;
+  private String title;
   
   public LicensedPanel(DialogLicenseManager parent,
 			  String merchantWalletID,
@@ -59,7 +60,8 @@ public class LicensedPanel extends JFrame {
 		       long licenseDaysRemaining,
 		       double payment,
 		       String unitsOfPayment,
-		       double dollarSubmitted) {
+		       double dollarSubmitted,
+		       String title) {
 
    
     this.merchantWalletID = merchantWalletID;
@@ -72,6 +74,8 @@ public class LicensedPanel extends JFrame {
     this.licenseDaysRemaining = licenseDaysRemaining;
     this.setLayout(new BorderLayout());
     this.licenseGrantedDate = licenseGrantedDate;
+    this.title = title;
+    this.setTitle(title);
 
     JPanel licenseLabelPane = new JPanel(new BorderLayout());
     licenseLabelPane.setBorder(BorderFactory.createTitledBorder(""));
