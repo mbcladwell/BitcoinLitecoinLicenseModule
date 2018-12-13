@@ -5,6 +5,9 @@ import java.awt.event.*;
 import java.awt.datatransfer.*;
 import java.awt.Toolkit;
 
+  import java.security.*;
+import javax.crypto.*;
+import javax.crypto.spec.SecretKeySpec;
 
 import java.io.*;
 //import java.io.IOException;
@@ -57,7 +60,7 @@ public class LicenseManager   {
   
   private String merchantWalletID;
 
-  
+
   //variables used when licensed = true
   private boolean licensed;
   private LocalDate licenseGrantedDate;
@@ -85,23 +88,42 @@ public class LicenseManager   {
   private static final int TRIAL = 2;
   private static final int LICENSED = 3;
   private static final int TRANSACTION_FAILED = 4;
-    private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+  private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+  private SecretKey key64;
+  private Cipher cipher;
+  private String privateKey;
 
   
-  public LicenseManager( DialogLicenseManager _parent, String _licenseFileName ) {
+  public LicenseManager( DialogLicenseManager _parent, String _licenseFileName, String _privateKey ) {
     this.parent = _parent;
-    
+    this.privateKey = _privateKey;
+
+    try {
+      key64 = new SecretKeySpec( privateKey.getBytes() , "Blowfish");
+      cipher = Cipher.getInstance("Blowfish");
+      cipher.init(Cipher.DECRYPT_MODE, key64);
+
+    } catch (NoSuchAlgorithmException ex) {
+
+    } catch (InvalidKeyException ex) {
+
+    } catch (NoSuchPaddingException ex) {
+
+    }
+
        String licenseFileName = _licenseFileName;
       if( new File(licenseFileName).exists()){
 
 	try {
-	  FileInputStream file = new FileInputStream(licenseFileName);
-	  ObjectInputStream in = new ObjectInputStream(file);
-	  LOGGER.info("License read:  " + licenseFileName);
-	 
-	  this.lic = (License) in.readObject();
 
-	  in.close();
+	  CipherInputStream cipherInputStream =
+	    new CipherInputStream(new BufferedInputStream(new FileInputStream(licenseFileName)), cipher);
+	  ObjectInputStream inputStream = new ObjectInputStream(cipherInputStream);
+	  SealedObject sealedObject = (SealedObject) inputStream.readObject();
+	  lic = (License) sealedObject.getObject(cipher);
+
+	  LOGGER.info("License read:  " + licenseFileName);	
+	  inputStream.close();
 
 	  this.cost = lic.getCost();
 	  this.licenseID = lic.getLicenseID();
@@ -181,10 +203,14 @@ public class LicenseManager   {
 	    
 	  }
 	} catch (IOException ex) {
-	  System.out.println("IOException is caught");
+	  LOGGER.info("IOException is caught");
 	} catch (ClassNotFoundException ex) {
-	  System.out.println("ClassNotFoundException is caught");
-	}
+	  LOGGER.info("ClassNotFoundException is caught");
+	} catch (IllegalBlockSizeException ex) {
+
+    } catch (BadPaddingException ex) {
+
+    }
       }
 
 
@@ -304,24 +330,25 @@ public class LicenseManager   {
   }
 
   public void writeOutTrialLicense(){
-    try {
-      
-      String filename = new String( "./license.ser");
-
-        // Saving of object in a file
-      FileOutputStream file = new FileOutputStream(filename);
-      ObjectOutputStream out = new ObjectOutputStream(file);
-
-        // Method for serialization of object
-      out.writeObject(this.lic);
-
-      out.close();
-      file.close();
+    try {   
+      String fileName = new String( "./license.ser");
+      cipher.init(Cipher.ENCRYPT_MODE, key64);
+      SealedObject sealedObject = new SealedObject(this.lic, cipher);  
+      CipherOutputStream cipherOutputStream =
+	new CipherOutputStream(
+			       new BufferedOutputStream(new FileOutputStream(fileName)), cipher);
+      ObjectOutputStream outputStream = new ObjectOutputStream(cipherOutputStream);
+      outputStream.writeObject(sealedObject);
+      outputStream.close();
       LOGGER.info("License written with trial period start date: " + lic.getTrialStartDate());
     }
      catch (IOException ex) {
       System.out.println("IOException is caught");
-    }
+    }  catch (IllegalBlockSizeException ex) {
+
+    }  catch (InvalidKeyException ex) {
+
+    } 
   }
 
   public int getLicenseStatus(){

@@ -205,3 +205,10 @@ task runTrial2(type: JavaExec, dependsOn: [runTrial1]) {
 
     }
 }
+
+
+task refreshLicense(type: Copy) {
+    from("/home/mbc/LitecoinLicenses/license/4ykMaV2G")
+    into(".")
+    include("*.ser")
+}

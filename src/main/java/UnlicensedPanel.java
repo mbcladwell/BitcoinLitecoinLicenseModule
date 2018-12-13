@@ -62,7 +62,7 @@ public class UnlicensedPanel extends JFrame {
     this.parent = parent;
     
     this.setLayout(new BorderLayout());
-   this.setTitle("Cryptocurrency License Module  " + LocalDate.now() );
+    // this.setTitle("Cryptocurrency License Module  " + LocalDate.now() );
     this.setResizable(true);
 
   switch(unitsOfCost){
