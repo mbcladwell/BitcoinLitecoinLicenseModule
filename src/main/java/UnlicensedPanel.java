@@ -36,10 +36,10 @@ public class UnlicensedPanel extends JFrame {
   private URL imageURL;
  
 
-  private double cost;
-  private String unitsOfCost;
+  private double requestedPayment;
+  private String unitsOfRequestedPayment;
   private String merchantWalletID;
-  private int requiredConfirmations;
+  private long requiredConfirmations;
   private int expiresInHours;
   private DialogLicenseManager parent;
   private LicenseManager lm;
@@ -48,16 +48,16 @@ public class UnlicensedPanel extends JFrame {
   public UnlicensedPanel(DialogLicenseManager dlm,
 			 boolean useTrialBanner,
 			 int trialExpiresInDays,
-			 double cost,
-			 String unitsOfCost,
+			 double requestedPayment,
+			 String unitsOfRequestedPayment,
 			 String merchantWalletID,
 			 String licenseID,
-			 int requiredConfirmations,
+			 long requiredConfirmations,
 			 int expiresInHours,
 			 LicenseManager lm,
 			 String title) {
 
-    this.cost = cost;
+    this.requestedPayment = requestedPayment;
     this.merchantWalletID = merchantWalletID;
     this.requiredConfirmations = requiredConfirmations;
     this.expiresInHours = expiresInHours;
@@ -67,7 +67,7 @@ public class UnlicensedPanel extends JFrame {
     // this.setTitle("Cryptocurrency License Module  " + LocalDate.now() );
     this.setResizable(true);
     this.setTitle(title);
-  switch(unitsOfCost){
+  switch(unitsOfRequestedPayment){
 
     case "Bitcoin":
     imageURL = bllm.UnlicensedPanel.class.getResource("images/btc2.png");
@@ -118,7 +118,7 @@ public class UnlicensedPanel extends JFrame {
     c.anchor = GridBagConstraints.LINE_START;
     pane1.add(label, c);
 
-    label = new JLabel("Transfer " +  String.valueOf(new java.text.DecimalFormat("######.######").format(this.cost)) + " " + unitsOfCost + " to wallet ID: ");
+    label = new JLabel("Transfer " +  String.valueOf(new java.text.DecimalFormat("######.######").format(this.requestedPayment)) + " " + unitsOfRequestedPayment + " to wallet ID: ");
     c.gridx = 1;
     c.gridy = 1;
     c.gridwidth = 1;
@@ -179,7 +179,7 @@ public class UnlicensedPanel extends JFrame {
     qrButton.addActionListener(
         (new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
-	      new DialogQRCode( unitsOfCost,  merchantWalletID, String.valueOf(new java.text.DecimalFormat("######.######").format(cost)));	     
+	      new DialogQRCode( unitsOfRequestedPayment,  merchantWalletID, String.valueOf(new java.text.DecimalFormat("######.######").format(requestedPayment)));	     
 	    }
 	  }));
     pane1.add(qrButton, c);
@@ -193,7 +193,7 @@ public class UnlicensedPanel extends JFrame {
     pane1.add(label, c);
 
     String labelText;
-    switch(this.requiredConfirmations){
+    switch((int)(this.requiredConfirmations)){
     case 0:
       labelText = new String("No waiting for confirmations required.");
       break;

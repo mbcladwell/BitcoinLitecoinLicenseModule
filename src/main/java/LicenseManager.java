@@ -42,42 +42,49 @@ public class LicenseManager   {
   private long requiredConfirmations;
   private long actualConfirmations;
   private boolean doubleSpend;
-  private LocalDate transactionDate;
+  private LocalDate trialStartDate;
+  private int trialExpiresInDays;
+  private int trialRemainingDays;
+  private boolean trialExpired;
   
 
    public double btcPriceInDollars;
    public double ltcPriceInDollars;
  
-  // Limits to determine license validity
-  private String unitsOfCost;  
-  private double cost;  //the requested amount in (undetermined) units
+  // cost refers to what the merchant is requesting
+  private String unitsOfCost;  //units of the request; could be dollars that need conversion
+  private double cost;  //the requested amount in units specified by unitsOfCost
+  //once specified, convert to all currencies
   private double costDollars;
   private double costLTC;
   private double costBTC;
-  private double costSatoshis;  
-  private double payment;
-  private String unitsOfPayment;
+  private double costSatoshis;
+
+  //payment refers to the preferred crypto payment requested
+  //determined by the type of wallet ids
+  //this is what should appear in the requesting dialog
+  private double requestedPayment;
+  private String unitsOfRequestedPayment;
+
+  //submitted refers to what, if anything, was submitted
+  private double dollarSubmitted;
+  private double ltcSubmitted;
+  private double btcSubmitted;
+  private double satoshisSubmitted;
   
   private String merchantWalletID;
 
 
   //variables used when licensed = true
+  private LocalDate transactionDate;
   private boolean licensed;
   private LocalDate licenseGrantedDate;
-  private LocalDate trialStartDate;
-  private double dollarSubmitted;
-  private double ltcSubmitted;
-  private double btcSubmitted;
-  private double satoshisSubmitted;
   private String licenseID;
   private String transactionID;
   private int licenseExpiresInDays;
   private int licenseRemainingDays;
   private boolean licenseExpired;
   private int transactionExpiresInHours;
-  private int trialExpiresInDays;
-  private int trialRemainingDays;
-  private boolean trialExpired;
   private boolean walletIDnotFound;
   private  License lic;
   private DialogLicenseManager parent;
@@ -133,7 +140,7 @@ public class LicenseManager   {
 	  this.licenseExpiresInDays = lic.getLicenseExpiresInDays();
 	  this.trialExpiresInDays = lic.getTrialExpiresInDays();
           this.licenseGrantedDate = lic.getLicenseGrantedDate();
-	  this.unitsOfPayment = lic.getUnitsOfPayment();
+	  this.unitsOfRequestedPayment = lic.getUnitsOfRequestedPayment();
 
 	  if( null == lic.getTrialStartDate()){
 	    lic.setTrialStartDate(LocalDate.now());
@@ -215,8 +222,10 @@ public class LicenseManager   {
 
   }
 
-  //cost calculations require an internet connection.
-  //run only if needed
+  /**     
+   *cost calculations require an internet connection.
+   * run only if needed  
+   */ 
   public void runCostCalculations(){
 
     CryptoCalculator cryptoCalculator = new CryptoCalculator();
@@ -229,12 +238,14 @@ public class LicenseManager   {
       this.costDollars = this.cost;
       this.costBTC = (this.costDollars/this.btcPriceInDollars);
       this.costLTC = (this.costDollars/this.ltcPriceInDollars);
-      switch(unitsOfPayment){
+      switch(unitsOfRequestedPayment){
       case "Bitcoin":
 	this.costSatoshis = (this.costDollars/this.btcPriceInDollars)*100000000;
+	this.requestedPayment = (this.costDollars/this.btcPriceInDollars);
 	break;
       case "Litecoin":
 	this.costSatoshis = (this.costDollars/this.ltcPriceInDollars)*100000000;
+	this.requestedPayment = (this.costDollars/this.ltcPriceInDollars);
 	break;
       }
       break;
@@ -266,18 +277,14 @@ public class LicenseManager   {
     this.deltaTime = transaction.getDeltaTime();
     this.walletIDnotFound = transaction.getWalletIDnotFound();
 
-    switch(unitsOfPayment){
+    switch(unitsOfRequestedPayment){
     case "Litecoin":
     this.dollarSubmitted = (this.satoshisSubmitted/100000000)*this.ltcPriceInDollars;
     this.ltcSubmitted = this.dollarSubmitted/this.ltcPriceInDollars;
-    this.payment = this.ltcSubmitted;
-    this.unitsOfPayment = "Litecoin";
     break;
     case "Bitcoin":
       this.dollarSubmitted = (this.satoshisSubmitted/100000000)*this.btcPriceInDollars;
     this.btcSubmitted = this.dollarSubmitted/this.btcPriceInDollars ;
-    this.payment = this.btcSubmitted;
-    this.unitsOfPayment = "Bitcoin";
     break;
     }
     
@@ -391,12 +398,12 @@ public class LicenseManager   {
     return this.btcSubmitted;
   }
 
-  public double getPayment(){
-    return this.payment;
+  public double getRequestedPayment(){
+    return this.requestedPayment;
   }
 
-  public String getUnitsOfPayment(){
-    return this.unitsOfPayment;
+  public String getUnitsOfRequestedPayment(){
+    return this.unitsOfRequestedPayment;
   }
 
   

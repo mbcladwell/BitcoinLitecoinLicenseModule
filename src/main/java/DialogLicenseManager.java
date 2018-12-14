@@ -20,7 +20,6 @@ public class DialogLicenseManager extends JFrame {
 
   private static final long serialVersionUID = 1L;
 
-  private long paymentInSatoshis; // value of LiteCoin Transaction
   private long deltaTime; // time difference between now and transaction time in hours
   private long requiredConfirmations;
   private long actualConfirmations;
@@ -30,11 +29,20 @@ public class DialogLicenseManager extends JFrame {
   public double btcPriceInDollars;
   public double ltcPriceInDollars;
 
-  // Limits to determine license validity
+  // unitsOfCost and cost provided by merchant in bllmlkg
   private String unitsOfCost;
+  private double cost;
+
+  // determine cost in each of the cryptocurrencies
   private double costLTC;
   private double costDollars;
   private double costSatoshis;
+
+  // determine payment in each of the cryptocurrencies
+  private double dollarSubmitted;
+  private double ltcSubmitted;
+  private double satoshiSubmitted;
+  // private long paymentInSatoshis;
 
   private String merchantWalletID;
 
@@ -43,10 +51,6 @@ public class DialogLicenseManager extends JFrame {
   private boolean displayTrialBanner;
   private LocalDate licenseGrantedDate;
   private LocalDate trialStartDate;
-  private double cost;
-  private double dollarSubmitted;
-  private double ltcSubmitted;
-  private double satoshiSubmitted;
   private String licenseID;
   private String transactionID;
   private int licenseExpiresInDays;
@@ -117,8 +121,8 @@ public class DialogLicenseManager extends JFrame {
             lm.getTransactionID(),
             lm.getLicenseGrantedDate(),
             lm.getLicenseRemainingDays(),
-            lm.getPayment(),
-            lm.getUnitsOfPayment(),
+            lm.getRequestedPayment(),
+            lm.getUnitsOfRequestedPayment(),
             lm.getDollarSubmitted(),
             this.title);
   }
@@ -129,8 +133,8 @@ public class DialogLicenseManager extends JFrame {
             this,
             this.displayTrialBanner,
             lm.getTrialRemainingDays(),
-            lm.getCost(),
-            lm.getUnitsOfCost(),
+            lm.getRequestedPayment(),
+            lm.getUnitsOfRequestedPayment(),
             lm.getMerchantWalletID(),
             lm.getLicenseID(),
             lm.getRequiredConfirmations(),
@@ -144,8 +148,8 @@ public class DialogLicenseManager extends JFrame {
         new TransactionFailedPanel(
             this,
             lm.getCostDollars(),
-            lm.getCost(),
-            lm.getUnitsOfCost(),
+            lm.getRequestedPayment(),
+            lm.getUnitsOfRequestedPayment(),
             lm.getMerchantWalletID(),
             lm.getLicenseID(),
             lm.getTransactionID(),
