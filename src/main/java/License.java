@@ -33,7 +33,6 @@ public class License implements Serializable {
   private int licenseExpiresInDays;
   private int trialExpiresInDays;
   private int transactionExpiresInHours;
-  // private double amountPaid;
 
   public License() {}
 
@@ -44,11 +43,7 @@ public class License implements Serializable {
   public String getLicenseID() {
     return this.licenseID;
   }
-  /*
-  public double getAmountPaid() {
-    return this.amountPaid;
-  }
-  */
+
   public double getCost() {
     return this.cost;
   }
@@ -139,6 +134,10 @@ public class License implements Serializable {
 
   public void setSatoshisSubmitted(double d) {
     this.satoshisSubmitted = d;
+  }
+
+  public double getSatoshisSubmitted() {
+    return this.satoshisSubmitted;
   }
 
   public double getLTCSubmitted() {

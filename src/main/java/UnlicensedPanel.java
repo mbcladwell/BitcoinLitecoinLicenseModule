@@ -44,24 +44,31 @@ public class UnlicensedPanel extends JFrame {
   private DialogLicenseManager parent;
   private LicenseManager lm;
   private String title;
+  private boolean useTrialBanner;
+  private int trialExpiresInDays;
   
-  public UnlicensedPanel(DialogLicenseManager dlm,
-			 boolean useTrialBanner,
-			 int trialExpiresInDays,
-			 double requestedPayment,
-			 String unitsOfRequestedPayment,
-			 String merchantWalletID,
-			 String licenseID,
-			 long requiredConfirmations,
-			 int expiresInHours,
-			 LicenseManager lm,
-			 String title) {
+  public UnlicensedPanel(DialogLicenseManager _parent,
+			 boolean _useTrialBanner,
+			 int _trialExpiresInDays,
+			 double _requestedPayment,
+			 String _unitsOfRequestedPayment,
+			 String _merchantWalletID,
+			 String _licenseID,
+			 long _requiredConfirmations,
+			 int _expiresInHours,
+			 LicenseManager _lm,
+			 String _title) {
 
-    this.requestedPayment = requestedPayment;
-    this.merchantWalletID = merchantWalletID;
-    this.requiredConfirmations = requiredConfirmations;
-    this.expiresInHours = expiresInHours;
-    this.parent = parent;
+    this.useTrialBanner = _useTrialBanner;
+    this.trialExpiresInDays = _trialExpiresInDays;
+    this.requestedPayment = _requestedPayment;
+    this.unitsOfRequestedPayment = _unitsOfRequestedPayment;
+    this.merchantWalletID = _merchantWalletID;
+    this.requiredConfirmations = _requiredConfirmations;
+    this.expiresInHours = _expiresInHours;
+    this.lm = _lm;
+    this.title = _title;
+    this.parent = _parent;
     
     this.setLayout(new BorderLayout());
     // this.setTitle("Cryptocurrency License Module  " + LocalDate.now() );
@@ -254,10 +261,10 @@ public class UnlicensedPanel extends JFrame {
 	    if( textField.getText() != null && !textField.getText().isEmpty()) {
 	      switch( lm.evaluateTransaction( textField.getText() ) ){
 	      case 4: //transaction failed
-		  dlm.displayTransactionFailedPanel();
+		  parent.displayTransactionFailedPanel();
 		  break;
 	      case 3: // licensed
-		dlm.displayLicensedPanel();
+		parent.displayLicensedPanel();
 		break;
 	      
 	      }
