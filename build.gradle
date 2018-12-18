@@ -27,19 +27,24 @@ version=0.1
 
 
 dependencies {
-     //build files("build/classes/java/main")
+    // build files("build/classes/java/main")
  
     // This dependency is exported to consumers, that is to say found on their compile classpath.
     api 'org.apache.commons:commons-math3:3.6.1'
+    api 'com.google.guava:guava:23.0'
 
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     implementation 'com.google.guava:guava:23.0'
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
-	
+
+//    compile 'com.google.guava:guava:23.0'
+
+    
 	//JSON parsing
 	compile 'com.google.code.gson:gson:2.8.5'
+	implementation 'com.google.code.gson:gson:2.8.5'
 
         //QR code library
         compile 'com.google.zxing:core:3.3.3'
@@ -50,9 +55,19 @@ dependencies {
 
 // In this section you declare where to find the dependencies of your project
  repositories {
-	jcenter()
-	mavenCentral()
+    jcenter()
+    google()
+    mavenCentral()
     }    
+
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+	mavenCentral()
+    }
+}
 
 task copyResources(type: Copy) {
    // from configurations.runtime
@@ -103,7 +118,7 @@ task updateMaven(type: Exec)  {
 }
 
 
-//
+
 /*
 task runLicensed(type: JavaExec) {
  classpath = sourceSets.main.runtimeClasspath
@@ -145,6 +160,13 @@ task runLicensed(type: JavaExec) {
 //date: 11/25/2018  9:40AM
 
 
+//LR7oHhz6H8dsSjBEGSQPLzWqMUenwS5dy7
+//46b739d9e231c9f847b31b6db1e84099c9b0192430da64e4926b49d5006ad52f
+//1.965LTC on Dec 18 12:20PM
+
+//https://api.blockcypher.com/v1/ltc/main/txs/46b739d9e231c9f847b31b6db1e84099c9b0192430da64e4926b49d5006ad52f
+
+
 task runTrial1(type: JavaExec, dependsOn: [build]) {
 
   classpath = sourceSets.main.runtimeClasspath
@@ -159,7 +181,7 @@ doFirst{
 	lic.setLicenseID("inTrial")
         lic.setCost(1)
         lic.setUnitsOfCost("Litecoin")
-	lic.setUnitsOfPayment('Litecoin')
+	lic.setUnitsOfRequestedPayment('Litecoin')
         lic.setRequiredConfirmations(3)
         lic.setLicenseExpiresInDays(365)
         lic.setTransactionExpiresInHours(1)
@@ -167,19 +189,20 @@ doFirst{
         lic.setMerchantWalletID("LZ56GFpLXiDeWsFfvgJPj84CX7o2BH7YfD")
         lic.setLicenseGrantedDate(java.time.LocalDate.now())
 	//lic.setLicenseGrantedDate(java.time.LocalDate.parse("2018-12-04"))
+
+        def  dlm = new bllm.DialogLicenseManager("title","./license.ser","nszpx5U5Kt6d91JB3CW31n3SiNjSUzcZ")
+  println 'made it here 1'
+        def  lrw = new bllm.LicenseReaderWriter(dlm, "./license.ser","nszpx5U5Kt6d91JB3CW31n3SiNjSUzcZ"  )
+								
+        lrw.writeLicense()
 	
-       FileOutputStream file = new FileOutputStream("license.ser")
-        ObjectOutputStream out = new ObjectOutputStream(file)
-        out.writeObject(lic)
-        out.close()
-        file.close()
     }
     
 
     
 }
 
-
+/*
 
 task runTrial2(type: JavaExec, dependsOn: [runTrial1]) {
 
@@ -205,6 +228,30 @@ task runTrial2(type: JavaExec, dependsOn: [runTrial1]) {
 
     }
 }
+ */
+
+
+task checkLicense(type: JavaExec, dependsOn: [build]) {
+     main = 'bllm.LicenseReaderWriterTest'
+ //   classpath files("build/libs/bllm-0.1.jar")
+ classpath = sourceSets.main.runtimeClasspath
+
+    doLast{
+     println 'in checkLicense'
+ 
+    
+   // classpath = sourceSets.main.runtimeClasspath
+//   def lic = new bllm.License()
+  //  bllm.DialogLicenseManager dlm = new bllm.DialogLicenseManager("title","./license.ser","nszpx5U5Kt6d91JB3CW31n3SiNjSUzcZ")
+  println 'made it here 1'
+ //   bllm.LicenseReaderWriter lrw = new bllm.LicenseReaderWriter(dlm, "./license.ser","nszpx5U5Kt6d91JB3CW31n3SiNjSUzcZ"  );
+								
+ //   lic = lrw.readLicense();
+    println 'made it here 2'
+ //   println ('getLicenseExpiresInDays(): ' +  lic.getLicenseExpiresInDays())
+    }
+}
+
 
 
 task refreshLicense(type: Copy) {

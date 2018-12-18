@@ -29,11 +29,14 @@ public class Transaction {
    * https://api.blockcypher.com/v1/ltc/main/txs/9e9c462b755defda988e9950b9797cecd055a017d32d9c6feff89ebdea5fe3cd
    * my wallet: LMGaFd8tmxJSDbo3GLZFJaPd1kNJ9r1v48
    */
-  public Transaction(String transactionID, String merchantWalletID, String unitsOfCost) {
+  public Transaction(
+      String transactionID, String merchantWalletID, String unitsOfRequestedPayment) {
     try {
-      switch (unitsOfCost) {
+      switch (unitsOfRequestedPayment) {
         case "Litecoin":
           url = new URL("https://api.blockcypher.com/v1/ltc/main/txs/" + transactionID);
+          LOGGER.info("URL: " + url);
+
           break;
         case "Bitcoin":
           url = new URL("https://api.blockcypher.com/v1/btc/main/txs/" + transactionID);
@@ -41,8 +44,11 @@ public class Transaction {
       }
 
       BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));
+      LOGGER.info("post bufferedreader ");
       Gson gson = new GsonBuilder().create();
+      LOGGER.info("post gson");
       TransactionObject to = gson.fromJson(reader, TransactionObject.class);
+      LOGGER.info("Transaction object: " + to);
 
       this.merchantWalletID = merchantWalletID;
       this.numberOfConfirmations = to.getConfirmations();

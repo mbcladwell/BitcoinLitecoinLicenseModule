@@ -58,7 +58,7 @@ public class LicenseReaderWriter   {
       SealedObject sealedObject = (SealedObject) inputStream.readObject();
       lic = (License) sealedObject.getObject(cipher);
       
-      LOGGER.info("License read:  " + licenseFileName);	
+      LOGGER.info("License read in LicenseReaderWriter.readLicense():  " + licenseFileName);	
       inputStream.close();
 
     }

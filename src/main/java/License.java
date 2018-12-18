@@ -109,7 +109,7 @@ public class License implements Serializable {
   }
 
   public String getUnitsOfRequestedPayment() {
-    return this.unitsOfCost;
+    return this.unitsOfRequestedPayment;
   }
 
   public void setUnitsOfRequestedPayment(String s) {

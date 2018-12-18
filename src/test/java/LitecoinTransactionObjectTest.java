@@ -3,23 +3,24 @@
  */
 package llm;
 
-import org.junit.Test;
 import static org.junit.Assert.*;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.*;
 import java.net.*;
-import java.util.concurrent.TimeUnit;
+import org.junit.Test;
 
 public class LitecoinTransactionObjectTest {
-    @Test public void litecoinTransactionMethod() {
+  @Test
+  public void litecoinTransactionMethod() {
 
-  try {
+    try {
       URL url = new URL("https://api.coinmarketcap.com/v2/ticker/2/");
       BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));
 
       Gson gson = new GsonBuilder().create();
-      //TimeUnit.SECONDS.sleep(1);
+      // TimeUnit.SECONDS.sleep(1);
       LitecoinPriceObject lpo = gson.fromJson(reader, LitecoinPriceObject.class);
       System.out.println("lpo: " + lpo);
       // this.ltcPriceInDollars = lpo.getCurrentValue();
@@ -33,16 +34,10 @@ public class LitecoinTransactionObjectTest {
       System.out.println("Problems retrieving Litecoin price from coinmarketcap.com!");
       System.out.println(e.toString());
     }
+  }
 
-
-
-       
-    }
-public static void main(String[] args){
-            LitecoinTransactionObjectTest ltot = new LitecoinTransactionObjectTest();
-             ltot.litecoinTransactionMethod();
-}
-
-
-
+  public static void main(String[] args) {
+    LitecoinTransactionObjectTest ltot = new LitecoinTransactionObjectTest();
+    ltot.litecoinTransactionMethod();
+  }
 }
