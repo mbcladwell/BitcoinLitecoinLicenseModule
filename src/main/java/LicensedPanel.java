@@ -12,6 +12,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 //import java.awt.Toolkit;
 import java.awt.datatransfer.*;
+import java.util.logging.*;
 
 import java.time.format.DateTimeFormatter; 
 
@@ -51,7 +52,8 @@ public class LicensedPanel extends JFrame {
   private long licenseDaysRemaining;
   private LocalDate licenseGrantedDate;
   private String title;
-  
+  private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
   public LicensedPanel(DialogLicenseManager parent,
 			  String merchantWalletID,
 		       String licenseID,
@@ -71,6 +73,7 @@ public class LicensedPanel extends JFrame {
     this.payment = payment;
     this.unitsOfPayment = unitsOfPayment;
     this.dollarSubmitted = dollarSubmitted;
+    LOGGER.info("payment: " + this.payment);
     this.licenseDaysRemaining = licenseDaysRemaining;
     this.setLayout(new BorderLayout());
     this.licenseGrantedDate = licenseGrantedDate;

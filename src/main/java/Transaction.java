@@ -69,6 +69,7 @@ public class Transaction {
               LOGGER.info("address: " + addresses[j]);
               if (this.merchantWalletID.equals(addresses[j])) {
                 this.paymentInSatoshis = outputs[i].getValue();
+                LOGGER.info("paymentInSatoshis: " + this.paymentInSatoshis);
               } else { // wallet not part of transaction
                 if (j == addresses.length - 1 && this.paymentInSatoshis == 0) {
                   this.walletIDnotFound = true;

@@ -259,15 +259,7 @@ public class UnlicensedPanel extends JFrame {
         (new ActionListener() {
           public void actionPerformed(ActionEvent e) {
 	    if( textField.getText() != null && !textField.getText().isEmpty()) {
-	      switch( lm.evaluateTransaction( textField.getText() ) ){
-	      case 4: //transaction failed
-		  parent.displayTransactionFailedPanel();
-		  break;
-	      case 3: // licensed
-		parent.displayLicensedPanel();
-		break;
-	      
-	      }
+	      lm.evaluateTransaction( textField.getText() );
 	    } else{
 	      JOptionPane.showMessageDialog( parent,
 					     "Enter a valid transaction ID in the text box.",

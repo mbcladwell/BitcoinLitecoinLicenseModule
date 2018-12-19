@@ -38,20 +38,22 @@ public class LicenseManager {
   private double costDollars;
   private double costLTC;
   private double costBTC;
-  private double costSatoshis;
+  private double costSatoshis; // currency dependant
 
   // payment refers to the preferred crypto payment requested
   // determined by the type of wallet ids
   // this is what should appear in the requesting dialog
   private double requestedPayment;
   private String unitsOfRequestedPayment;
+  // actualPayment is what is actually submitted as payment
+  // without units; units are held by unitsOfRequestedPayment
+  private double actualPayment; // in favored currency for passing to License
 
   // submitted refers to what, if anything, was submitted
   private double dollarSubmitted;
   private double ltcSubmitted;
   private double btcSubmitted;
   private double satoshisSubmitted;
-
   private String merchantWalletID;
 
   // variables used when licensed = true
@@ -159,6 +161,7 @@ public class LicenseManager {
           this.satoshisSubmitted = lic.getSatoshisSubmitted();
           this.transactionID = lic.getTransactionID();
           this.dollarSubmitted = lic.getDollarSubmitted();
+          this.actualPayment = lic.getActualPayment();
 
           break;
 
@@ -171,6 +174,9 @@ public class LicenseManager {
           break;
       }
     }
+    // the constructor sets license status which is then obtained by DialogLicenseManager using
+    // the getLicenseStatus() method
+    LOGGER.info("this.actualPayment at end of LicenseManager  constructor" + this.actualPayment);
   }
 
   /** cost calculations require an internet connection. run only if needed */
@@ -185,14 +191,15 @@ public class LicenseManager {
         this.costDollars = this.cost;
         this.costBTC = (this.costDollars / this.btcPriceInDollars);
         this.costLTC = (this.costDollars / this.ltcPriceInDollars);
-        this.costSatoshis = (this.costDollars / this.btcPriceInDollars) * 100000000;
 
         switch (unitsOfRequestedPayment) {
           case "Bitcoin":
             this.requestedPayment = (this.costDollars / this.btcPriceInDollars);
+            this.costSatoshis = (this.costDollars / this.btcPriceInDollars) * 100000000;
             break;
           case "Litecoin":
             this.requestedPayment = (this.costDollars / this.ltcPriceInDollars);
+            this.costSatoshis = (this.costDollars / this.ltcPriceInDollars) * 100000000;
             break;
         }
         break;
@@ -201,7 +208,7 @@ public class LicenseManager {
         this.costLTC = this.cost;
         this.costDollars = this.costLTC * this.ltcPriceInDollars;
         this.costBTC = this.costDollars / this.btcPriceInDollars;
-        this.costSatoshis = this.costBTC * 100000000;
+        this.costSatoshis = this.costLTC * 100000000;
         break;
       case "Bitcoin":
         this.requestedPayment = this.cost;
@@ -227,12 +234,14 @@ public class LicenseManager {
 
     switch (unitsOfRequestedPayment) {
       case "Litecoin":
-        this.dollarSubmitted = (this.satoshisSubmitted / 100000000) * this.btcPriceInDollars;
+        this.dollarSubmitted = (this.satoshisSubmitted / 100000000) * this.ltcPriceInDollars;
         this.ltcSubmitted = this.dollarSubmitted / this.ltcPriceInDollars;
+        this.actualPayment = this.dollarSubmitted / this.ltcPriceInDollars;
         break;
       case "Bitcoin":
         this.dollarSubmitted = (this.satoshisSubmitted / 100000000) * this.btcPriceInDollars;
         this.btcSubmitted = this.dollarSubmitted / this.btcPriceInDollars;
+        this.actualPayment = this.dollarSubmitted / this.btcPriceInDollars;
         break;
     }
 
@@ -246,12 +255,14 @@ public class LicenseManager {
       this.lic.setTransactionID(this.transactionID);
       this.lic.setSatoshisSubmitted(this.satoshisSubmitted);
       this.lic.setDollarSubmitted(this.dollarSubmitted);
-
+      this.lic.setActualPayment(this.actualPayment);
       licReadWrite.writeLicense(lic);
+      this.licenseRemainingDays = this.licenseExpiresInDays;
       parent.displayLicensedPanel();
 
     } else {
       this.licenseStatus = LicenseManager.TRANSACTION_FAILED;
+      parent.displayTransactionFailedPanel();
     }
     LOGGER.info("License status in LicenseManager: " + licenseStatus);
     return this.licenseStatus;
@@ -271,6 +282,10 @@ public class LicenseManager {
 
   public double getCostDollars() {
     return this.costDollars;
+  }
+
+  public double getActualPayment() {
+    return this.actualPayment;
   }
 
   public double getDollarSubmitted() {

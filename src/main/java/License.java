@@ -25,6 +25,7 @@ public class License implements Serializable {
   private double dollarSubmitted;
   private double cost;
   private String unitsOfCost;
+  private double actualPayment;
   private String unitsOfRequestedPayment;
 
   private String licenseID;
@@ -114,6 +115,14 @@ public class License implements Serializable {
 
   public void setUnitsOfRequestedPayment(String s) {
     this.unitsOfRequestedPayment = s;
+  }
+
+  public double getActualPayment() {
+    return this.actualPayment;
+  }
+
+  public void setActualPayment(double d) {
+    this.actualPayment = d;
   }
 
   public int getRequiredConfirmations() {

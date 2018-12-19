@@ -255,7 +255,7 @@ task checkLicense(type: JavaExec, dependsOn: [build]) {
 
 
 task refreshLicense(type: Copy) {
-    from("/home/mbc/LitecoinLicenses/license/4ykMaV2G")
+    from("/home/mbc/LitecoinLicenses/license/DkFzn23a")
     into(".")
     include("*.ser")
 }

@@ -113,6 +113,7 @@ public class DialogLicenseManager extends JFrame {
   }
 
   public void displayLicensedPanel() {
+    LOGGER.info("licenseRemainingDay: " + lm.getLicenseRemainingDays());
     pane3 =
         new LicensedPanel(
             this,
@@ -121,7 +122,7 @@ public class DialogLicenseManager extends JFrame {
             lm.getTransactionID(),
             lm.getLicenseGrantedDate(),
             lm.getLicenseRemainingDays(),
-            lm.getRequestedPayment(),
+            lm.getActualPayment(),
             lm.getUnitsOfRequestedPayment(),
             lm.getDollarSubmitted(),
             this.title);
