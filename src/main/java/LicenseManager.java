@@ -79,6 +79,16 @@ public class LicenseManager {
   private String privateKey;
   private LicenseReaderWriter licReadWrite;
 
+  /**
+   * Class with the business logic. Instantiate when you launch your application The LicenseManager
+   * will read the license.ser file and determine, based on dates and transaction parameters,
+   * whether the license is valid or not
+   *
+   * @param _parent The parent GUI that will interact with user
+   * @param _licenseFileName shoud be license.ser; but you must provide full path to a location the
+   *     user has read write access to.
+   * @param _privateKey for encryption. Can be specified in BLLM License Key Generator
+   */
   public LicenseManager(DialogLicenseManager _parent, String _licenseFileName, String _privateKey) {
     this.parent = _parent;
     this.privateKey = _privateKey;
@@ -220,6 +230,12 @@ public class LicenseManager {
     }
   }
 
+  /**
+   * Determine if the transaction is valid.
+   *
+   * @param transactionID the transaction ID obtained from the block explorer after a payment is
+   *     made. Note that make the payment is independent of the licensing module.
+   */
   public int evaluateTransaction(String transactionID) {
 
     Transaction transaction =
@@ -267,7 +283,10 @@ public class LicenseManager {
     LOGGER.info("License status in LicenseManager: " + licenseStatus);
     return this.licenseStatus;
   }
-
+  /**
+   * Query LicenseManager.getLicenseStatus() upon startup of you application to determine how to
+   * handle the invocation of your app.
+   */
   public int getLicenseStatus() {
     return this.licenseStatus;
   }

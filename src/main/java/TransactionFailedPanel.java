@@ -91,7 +91,7 @@ public class TransactionFailedPanel extends JFrame {
 
     JLabel licenseLabel = new JLabel("Transaction Failed", JLabel.CENTER);
     licenseLabel.setForeground(Color.red);
-    licenseLabel.setFont(new Font("Serif", Font.BOLD, 25));
+    licenseLabel.setFont(new Font("Helvetica", Font.BOLD, 25));
     licenseLabelPane.add(licenseLabel, BorderLayout.CENTER);
     this.add(licenseLabelPane, BorderLayout.NORTH);
 

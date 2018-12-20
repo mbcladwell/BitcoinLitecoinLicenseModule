@@ -99,7 +99,7 @@ public class UnlicensedPanel extends JFrame {
       licenseLabel.setForeground( Color.red);
     }
     
-    licenseLabel.setFont(new Font("Serif", Font.BOLD, 25));
+    licenseLabel.setFont(new Font("Helvetica", Font.BOLD, 25));
     licenseLabelPane.add(licenseLabel, BorderLayout.CENTER);
     this.add(licenseLabelPane, BorderLayout.NORTH);  
 

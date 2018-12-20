@@ -96,6 +96,18 @@ task myJavadocs(type: Javadoc) {
 }
 
 
+
+task copyJavaDocsToWeb(type: Copy, dependsOn: [myJavadocs]) {
+   // from configurations.runtime
+    from("build/docs/.")
+    into("/home/mbc/syncd/stihie/source/_posts/2018-08-11-bllmplugin")
+    include('*.html', '*.js', '*.js')
+    include('javadoc/**')
+    
+}
+
+
+
 jar {
     manifest {
         attributes(
@@ -259,3 +271,9 @@ task refreshLicense(type: Copy) {
     into(".")
     include("*.ser")
 }
+
+
+
+
+
+
