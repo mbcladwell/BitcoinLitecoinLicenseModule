@@ -77,6 +77,7 @@ public class LicenseManager {
   private static final int TRANSACTION_FAILED = 4;
   private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
   private String privateKey;
+  private String licenseFileName;
   private LicenseReaderWriter licReadWrite;
 
   /**
@@ -92,7 +93,22 @@ public class LicenseManager {
   public LicenseManager(DialogLicenseManager _parent, String _licenseFileName, String _privateKey) {
     this.parent = _parent;
     this.privateKey = _privateKey;
-    String licenseFileName = _licenseFileName;
+    this.licenseFileName = _licenseFileName;
+    readLicenseSetVariables();
+  }
+
+  /**
+   * Two parameter constructor is used noninteractively to assess license status using the method
+   * LicenseManager.getLicenseStatus()
+   */
+  public LicenseManager(String _licenseFileName, String _privateKey) {
+
+    this.privateKey = _privateKey;
+    this.licenseFileName = _licenseFileName;
+    readLicenseSetVariables();
+  }
+
+  private void readLicenseSetVariables() {
 
     if (new java.io.File(licenseFileName).exists()) {
       licReadWrite = new LicenseReaderWriter(parent, licenseFileName, privateKey);
@@ -285,7 +301,8 @@ public class LicenseManager {
   }
   /**
    * Query LicenseManager.getLicenseStatus() upon startup of you application to determine how to
-   * handle the invocation of your app.
+   * handle the invocation of your app. Status integers: UNLICENSED = 1; TRIAL = 2; LICENSED = 3;
+   * TRANSACTION_FAILED = 4;
    */
   public int getLicenseStatus() {
     return this.licenseStatus;
